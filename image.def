@@ -9,6 +9,9 @@ From: r-base:4.5.2
 
   # mlr3
   R --slave -e 'install.packages("R6")'
+  R --slave -e 'install.packages("stringi", type = "source")'
+  R --slave -e 'install.packages("fs")'
+  R --slave -e 'install.packages("brew")'
   R --slave -e 'install.packages("data.table")'
   R --slave -e 'install.packages("remotes")'
   R --slave -e 'remotes::install_github("mlr-org/mlr3extralearners")'

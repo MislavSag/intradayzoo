@@ -105,7 +105,7 @@ at_rf = create_autotuner(
     ranger.num.trees  = p_int(10, 2000),
     ranger.splitrule  = p_fct(levels = c("variance", "extratrees"))
   ),
-  n_evals = 2
+  n_evals = 20
 )
 
 # XGBOOST
@@ -118,16 +118,26 @@ at_xgboost = create_autotuner(
     xgboost.nrounds   = p_int(1, 5000),
     xgboost.subsample = p_dbl(0.1, 1)
   ),
-  n_evals = 2
+  n_evals = 20
 )
 
-# Mlr3 design
-autotuners = list(at_rf, at_xgboost)
-design = benchmark_grid(
-  tasks = task,
-  learners = autotuners,
-  resamplings = rsmp("gap_cv", initial_window = train_size_years_init + 7, horizon = 1, gap = 0, step = 1, rolling = FALSE)
+# NNET
+at_nnet = create_autotuner(
+  learner      = lrn("regr.nnet", id = "nnet"),
+  search_space = ps(
+    nnet.size  = p_int(lower = 2, upper = 15),
+    nnet.decay = p_dbl(lower = 0.0001, upper = 0.1),
+    nnet.maxit = p_int(lower = 50, upper = 500)
+    
+  ),
+  n_evals = 20
 )
+
+
+# Mlr3 design
+autotuners = list(at_rf, at_xgboost, at_nnet)
+rsmp_ = rsmp("gap_cv", initial_window = train_size_years_init, horizon = 1, gap = 0, step = 1, rolling = FALSE)
+design = benchmark_grid(tasks = task,learners = autotuners, resamplings = rsmp_)
 
 # # Benchmark
 # bmr = benchmark(design)
@@ -266,9 +276,6 @@ writeLines(sh_file, sh_file_name)
 #   # ),
 #   # models
 #   choose_learners.selection = p_fct(levels = choices),
-#   nnet.nnet.size  = p_int(lower = 2, upper = 15, depends = choose_learners.selection == "nnet"),
-#   nnet.nnet.decay = p_dbl(lower = 0.0001, upper = 0.1, depends = choose_learners.selection == "nnet"),
-#   nnet.nnet.maxit = p_int(lower = 50, upper = 500, depends = choose_learners.selection == "nnet"),
 #   mlp.torch_model_regr.batch_size = p_int(lower = 8, upper = 128, tags = "tune", depends = choose_learners.selection == "mlp"),
 #   # mlp.torch_model_regr.patience = p_int(lower = 0, upper = 10, tags = "tune"),
 #   mlp.torch_optimizer.lr = p_dbl(lower = 1e-4, upper = 1e-1, logscale = TRUE, tags = "tune", depends = choose_learners.selection == "mlp"),

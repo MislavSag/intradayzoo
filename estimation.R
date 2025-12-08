@@ -99,11 +99,11 @@ create_autotuner = function(learner, search_space, n_evals = 20) {
 at_rf = create_autotuner(
   learner      = lrn("regr.ranger", id = "ranger"),
   search_space = ps(
-    ranger.max.depth  = p_int(1, 15),
-    ranger.replace    = p_lgl(),
-    ranger.mtry.ratio = p_dbl(0.3, 1),
-    ranger.num.trees  = p_int(10, 2000),
-    ranger.splitrule  = p_fct(levels = c("variance", "extratrees"))
+    max.depth  = p_int(1, 15),
+    replace    = p_lgl(),
+    mtry.ratio = p_dbl(0.3, 1),
+    num.trees  = p_int(10, 2000),
+    splitrule  = p_fct(levels = c("variance", "extratrees"))
   ),
   n_evals = 20
 )
@@ -112,11 +112,11 @@ at_rf = create_autotuner(
 at_xgboost = create_autotuner(
   learner      = lrn("regr.xgboost", id = "xgboost"),
   search_space = ps(
-    xgboost.alpha     = p_dbl(0.001, 100, logscale = TRUE),
-    xgboost.max_depth = p_int(1, 20),
-    xgboost.eta       = p_dbl(0.0001, 1, logscale = TRUE),
-    xgboost.nrounds   = p_int(1, 5000),
-    xgboost.subsample = p_dbl(0.1, 1)
+    alpha     = p_dbl(0.001, 100, logscale = TRUE),
+    max_depth = p_int(1, 20),
+    eta       = p_dbl(0.0001, 1, logscale = TRUE),
+    nrounds   = p_int(1, 5000),
+    subsample = p_dbl(0.1, 1)
   ),
   n_evals = 20
 )
@@ -125,19 +125,27 @@ at_xgboost = create_autotuner(
 at_nnet = create_autotuner(
   learner      = lrn("regr.nnet", id = "nnet"),
   search_space = ps(
-    nnet.size  = p_int(lower = 2, upper = 15),
-    nnet.decay = p_dbl(lower = 0.0001, upper = 0.1),
-    nnet.maxit = p_int(lower = 50, upper = 500)
+    size  = p_int(lower = 2, upper = 15),
+    decay = p_dbl(lower = 0.0001, upper = 0.1),
+    maxit = p_int(lower = 50, upper = 500)
     
   ),
   n_evals = 20
 )
 
-
 # Mlr3 design
 autotuners = list(at_rf, at_xgboost, at_nnet)
-rsmp_ = rsmp("gap_cv", initial_window = train_size_years_init, horizon = 1, gap = 0, step = 1, rolling = FALSE)
-design = benchmark_grid(tasks = task,learners = autotuners, resamplings = rsmp_)
+design = benchmark_grid(
+  tasks = task,
+  learners = autotuners, 
+  resamplings = rsmp("gap_cv", initial_window = train_size_years_init, horizon = 1, gap = 0, step = 1, rolling = FALSE)
+)
+
+# Checks
+if (interactive()) {
+  design$resampling[[1]]$iters
+}
+
 
 # # Benchmark
 # bmr = benchmark(design)

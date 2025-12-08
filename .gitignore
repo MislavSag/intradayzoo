@@ -1,0 +1,5 @@
+experiments_test/
+.vscode
+.Rproj.user
+data/
+.Rhistory

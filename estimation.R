@@ -225,7 +225,7 @@ if (interactive()) {
 }
 
 # populate registry with problems and algorithms to form the jobs
-batchmark(design, reg = reg, store_models = TRUE)
+batchmark(design, reg = reg, store_models = FALSE)
 
 # save registry
 saveRegistry(reg = reg)
@@ -267,7 +267,7 @@ sh_file = sprintf("
 
 #PBS -N HFFZ
 #PBS -l ncpus=4
-#PBS -l mem=10GB
+#PBS -l mem=16GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments/logs

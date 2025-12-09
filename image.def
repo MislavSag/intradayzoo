@@ -29,6 +29,7 @@ From: r-base:4.5.2
   R --slave -e 'install.packages("mlr3verse")'
   R --slave -e 'install.packages("mlr3viz")'
   R --slave -e 'install.packages("mlr3mbo")'
+  R --slave -e 'install.packages("mlr3hyperband")'
   R --slave -e 'install.packages("mlr3batchmark")'
   R --slave -e 'install.packages("batchtools")'
   R --slave -e 'install.packages("paradox")'

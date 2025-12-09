@@ -12,6 +12,7 @@ library(torch)
 library(mlr3torch)
 library(mlr3finance)
 library(paradox)
+library(mlr3hyperband)
 
 
 # Import data
@@ -73,9 +74,10 @@ if (interactive()) {
 
 
 # Create autotuners
-create_autotuner = function(learner, search_space, n_evals = 20) {
+create_autotuner = function(learner, search_space, n_evals = 20, hyper = TRUE) {
   # Use random search for efficiency
-  tuner = tnr("random_search")
+  # tuner = tnr("random_search")
+  tuner   = tnr("hyperband", eta = 6)
   
   # Use inner resampling for validation (80/20 split)
   # This is the validation set mentioned in the paper
@@ -88,12 +90,18 @@ create_autotuner = function(learner, search_space, n_evals = 20) {
     measure = msr("regr.mse"),
     search_space = search_space,
     # terminator = trm("evals", n_evals = n_evals),
-    term_evals = n_evals,
+    terminator = trm("none"),
+    # term_evals = n_evals,
     tuner = tuner
   )
+  set_threads(at, n = threads)
   
   return(at)
 }
+
+# Parameters
+n_evals = 5
+threads = 4
 
 # Random forest
 at_rf = create_autotuner(
@@ -102,10 +110,11 @@ at_rf = create_autotuner(
     max.depth  = p_int(1, 15),
     replace    = p_lgl(),
     mtry.ratio = p_dbl(0.3, 1),
-    num.trees  = p_int(10, 2000),
-    splitrule  = p_fct(levels = c("variance", "extratrees"))
+    splitrule  = p_fct(levels = c("variance", "extratrees")),
+    # num.trees  = p_int(10, 2000)
+    num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
   ),
-  n_evals = 20
+  n_evals = n_evals
 )
 
 # XGBOOST
@@ -115,26 +124,71 @@ at_xgboost = create_autotuner(
     alpha     = p_dbl(0.001, 100, logscale = TRUE),
     max_depth = p_int(1, 20),
     eta       = p_dbl(0.0001, 1, logscale = TRUE),
-    nrounds   = p_int(1, 5000),
-    subsample = p_dbl(0.1, 1)
+    subsample = p_dbl(0.1, 1),
+    # nrounds   = p_int(1, 5000),
+    nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
   ),
-  n_evals = 20
+  n_evals = n_evals
 )
 
 # NNET
 at_nnet = create_autotuner(
-  learner      = lrn("regr.nnet", id = "nnet"),
+  learner      = lrn("regr.nnet", id = "nnet", MaxNWts = 50000),
   search_space = ps(
     size  = p_int(lower = 2, upper = 15),
     decay = p_dbl(lower = 0.0001, upper = 0.1),
-    maxit = p_int(lower = 50, upper = 500)
-    
+    # maxit = p_int(lower = 50, upper = 500)
+    maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
   ),
-  n_evals = 20
+  n_evals = n_evals
+)
+
+# BART
+at_bart = create_autotuner(
+  learner      = lrn("regr.bart", id = "bart", sigest = 1),
+  search_space = ps(
+    k      = p_dbl(lower = 1, upper = 8),
+    numcut = p_int(lower = 30, upper = 200),
+    # ntree  = p_int(lower = 50, upper = 500),
+    ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
+  ),
+  n_evals = n_evals
+)
+
+# NN
+mlp_graph = po("torch_ingress_num") %>>%
+  po("nn_linear", out_features = 20) %>>%
+  po("nn_relu") %>>%
+  po("nn_head") %>>%
+  po("torch_loss", loss = t_loss("mse")) %>>%
+  po("torch_optimizer", optimizer = t_opt("adam", lr = 0.1)) %>>%
+  po("torch_callbacks", callbacks = t_clbk("history")) %>>%
+  po("torch_model_regr", batch_size = 16, epochs = 50, device = "cpu")
+at_nn = create_autotuner(
+  learner      = mlp_graph,
+  search_space = ps(
+    torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
+    torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
+    torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
+  ),
+  n_evals = n_evals
+)
+
+# earth
+at_earth = create_autotuner(
+  learner      = lrn("regr.earth", id = "earth"),
+  search_space = ps(
+    degree  = p_int(lower = 1, upper = 3),                      # Max interaction degree
+    penalty = p_dbl(lower = 1, upper = 5),                      # GCV penalty per knot
+    nprune  = p_int(lower = 10, upper = 100),                   # Max terms after pruning
+    pmethod = p_fct(levels = c("backward", "none", "exhaustive", "forward")), # Pruning method
+    nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
+  ),
+  n_evals = n_evals
 )
 
 # Mlr3 design
-autotuners = list(at_rf, at_xgboost, at_nnet)
+autotuners = list(at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth)
 design = benchmark_grid(
   tasks = task,
   learners = autotuners, 
@@ -145,7 +199,6 @@ design = benchmark_grid(
 if (interactive()) {
   design$resampling[[1]]$iters
 }
-
 
 # # Benchmark
 # bmr = benchmark(design)
@@ -288,14 +341,6 @@ writeLines(sh_file, sh_file_name)
 #   # mlp.torch_model_regr.patience = p_int(lower = 0, upper = 10, tags = "tune"),
 #   mlp.torch_optimizer.lr = p_dbl(lower = 1e-4, upper = 1e-1, logscale = TRUE, tags = "tune", depends = choose_learners.selection == "mlp"),
 #   mlp.torch_model_regr.epochs = p_int(lower = 20, upper = 200, tags = "tune", depends = choose_learners.selection == "mlp"),
-#   tabnet.tabnet.epochs = p_int(lower = 20, upper = 200, tags = "tune", depends = choose_learners.selection == "tabnet"),
-#   tabnet.tabnet.virtual_batch_size = p_int(lower = 16, upper = 512, tags = "tune", depends = choose_learners.selection == "tabnet"),
-#   tabnet.tabnet.learn_rate = p_dbl(lower = 1e-4, upper = 1e-1, logscale = TRUE, tags = "tune", depends = choose_learners.selection == "tabnet"),
-#   tabnet.tabnet.num_steps = p_int(lower = 2, upper = 10, tags = "tune", depends = choose_learners.selection == "tabnet"),
-#   tabnet.tabnet.decision_width = p_int(lower = 8, upper = 64, tags = "tune", depends = choose_learners.selection == "tabnet"),
-#   bart.bart.k      = p_dbl(lower = 1, upper = 10, depends = choose_learners.selection == "bart"),
-#   bart.bart.numcut = p_int(lower = 10, upper = 200, depends = choose_learners.selection == "bart"),
-#   bart.bart.ntree  = p_int(lower = 50, upper = 500, depends = choose_learners.selection == "bart")
 # )
 
 # # Learners without hyperparameter tuning

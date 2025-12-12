@@ -1,0 +1,41 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 28 (seed = 29) ...
+INFO  [04:23:33.578] [mlr3] Applying learner 'xgboost.tuned' on task 'factorszoo' (iter 11/17)
+INFO  [04:23:33.897] [bbotk] Starting to optimize 5 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:23:34.011] [bbotk] Evaluating 36 configuration(s)
+INFO  [04:23:34.103] [mlr3] Running benchmark with 36 resampling iterations
+INFO  [04:23:34.175] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:26:23.490] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:26:58.499] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:30:04.944] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:30:39.908] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:31:56.843] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:32:31.397] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:33:05.978] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:34:05.784] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:34:51.317] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:36:41.142] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:16.101] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:51.053] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:43:41.063] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:47:21.187] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:50:23.205] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:54:04.747] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:54:39.903] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:55:31.407] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+Killed
+Cgroup mem limit exceeded: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=112277[28].admin,mems_allowed=0-1,oom_memcg=/pbs_jobs.service/jobid/112277[28].admin,task_memcg=/pbs_jobs.service/jobid/112277[28].admin,task=R,pid=4117025,uid=3107

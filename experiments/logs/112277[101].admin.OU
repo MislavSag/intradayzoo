@@ -1,0 +1,62 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 101 (seed = 102) ...
+INFO  [05:07:27.851] [mlr3] Applying learner 'earth.tuned' on task 'factorszoo' (iter 16/17)
+INFO  [05:07:28.075] [bbotk] Starting to optimize 5 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [05:07:28.176] [bbotk] Evaluating 6 configuration(s)
+INFO  [05:07:29.141] [mlr3] Running benchmark with 6 resampling iterations
+INFO  [05:07:29.191] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [05:43:46.396] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [06:20:31.006] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [06:23:16.144] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [07:03:02.143] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [07:05:47.663] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [07:43:41.568] [mlr3] Finished benchmark
+INFO  [07:43:41.679] [bbotk] Result of batch 1:
+INFO  [07:43:41.688] [bbotk]  degree  penalty nprune    pmethod nk stage bracket repetition     regr.mse
+INFO  [07:43:41.688] [bbotk]       2 2.639572     97    forward 50     0       1          1 5.474111e-06
+INFO  [07:43:41.688] [bbotk]       2 2.779378     34 exhaustive 50     0       1          1 5.474111e-06
+INFO  [07:43:41.688] [bbotk]       1 2.588974     14       none 50     0       1          1 2.033293e-06
+INFO  [07:43:41.688] [bbotk]       2 4.601698     87       none 50     0       1          1 5.575232e-06
+INFO  [07:43:41.688] [bbotk]       1 1.230909     73   backward 50     0       1          1 2.643394e-06
+INFO  [07:43:41.688] [bbotk]       2 4.326408     45       none 50     0       1          1 5.575232e-06
+INFO  [07:43:41.688] [bbotk]  warnings errors runtime_learners                                uhash
+INFO  [07:43:41.688] [bbotk]         0      0         2177.173 8d5f7aec-b041-4f1f-b97c-390ea9469723
+INFO  [07:43:41.688] [bbotk]         0      0         2204.560 8480558f-bd2a-42ad-b9e7-e97fb9ff804b
+INFO  [07:43:41.688] [bbotk]         0      0          165.117 697e0ed5-30f8-429f-b9db-8af0fb35070b
+INFO  [07:43:41.688] [bbotk]         0      0         2385.974 95b8f08d-5d1e-487d-b45e-a67e9c7fc037
+INFO  [07:43:41.688] [bbotk]         0      0          165.484 faa68083-0c1f-4946-b00b-6197945365c7
+INFO  [07:43:41.688] [bbotk]         0      0         2273.879 135e5b23-1edf-4a79-89c1-8e9665877977
+INFO  [07:43:41.730] [bbotk] Evaluating 3 configuration(s)
+INFO  [07:43:41.743] [mlr3] Running benchmark with 3 resampling iterations
+INFO  [07:43:41.768] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [08:22:38.182] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [09:12:04.587] [mlr3] Applying learner 'earth' on task 'factorszoo' (iter 1/1)
+INFO  [09:14:49.688] [mlr3] Finished benchmark
+INFO  [09:14:49.751] [bbotk] Result of batch 2:
+INFO  [09:14:49.757] [bbotk]  degree  penalty nprune    pmethod  nk stage bracket repetition     regr.mse
+INFO  [09:14:49.757] [bbotk]       2 2.706038     58 exhaustive 300     0       0          1 5.474111e-06
+INFO  [09:14:49.757] [bbotk]       3 3.112804     24       none 300     0       0          1 2.173475e-06
+INFO  [09:14:49.757] [bbotk]       1 2.588974     14       none 300     1       1          1 2.033293e-06
+INFO  [09:14:49.757] [bbotk]  warnings errors runtime_learners                                uhash
+INFO  [09:14:49.757] [bbotk]         0      0         2336.390 4aa7890d-9834-4fcd-97c4-62af77f66796
+INFO  [09:14:49.757] [bbotk]         0      0         2966.364 eb425432-f35e-4656-9633-ad540c7557ea
+INFO  [09:14:49.757] [bbotk]         0      0          165.066 f35a25d7-107b-43ae-b585-4fadfbefd419
+INFO  [09:14:49.785] [bbotk] Finished optimizing after 9 evaluation(s)
+INFO  [09:14:49.789] [bbotk] Result:
+INFO  [09:14:49.793] [bbotk]  degree  penalty nprune pmethod    nk learner_param_vals  x_domain     regr.mse
+INFO  [09:14:49.793] [bbotk]   <int>    <num>  <int>  <char> <num>             <list>    <list>        <num>
+INFO  [09:14:49.793] [bbotk]       1 2.588974     14    none    50          <list[5]> <list[5]> 2.033293e-06

@@ -1,0 +1,53 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 81 (seed = 82) ...
+INFO  [04:53:10.325] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.tuned' on task 'factorszoo' (iter 13/17)
+INFO  [04:53:10.529] [bbotk] Starting to optimize 3 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:53:10.615] [bbotk] Evaluating 6 configuration(s)
+INFO  [04:53:10.639] [mlr3] Running benchmark with 6 resampling iterations
+INFO  [04:53:10.707] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [05:31:51.881] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [06:25:35.191] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [07:32:50.198] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [08:10:12.140] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [08:46:13.094] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [09:20:42.719] [mlr3] Finished benchmark
+INFO  [09:20:42.840] [bbotk] Result of batch 1:
+INFO  [09:20:42.848] [bbotk]  torch_model_regr.batch_size torch_optimizer.lr torch_model_regr.epochs stage
+INFO  [09:20:42.848] [bbotk]                          177          -3.360872                      83     0
+INFO  [09:20:42.848] [bbotk]                          128          -7.815688                      83     0
+INFO  [09:20:42.848] [bbotk]                          102          -4.689019                      83     0
+INFO  [09:20:42.848] [bbotk]                          183          -3.567112                      83     0
+INFO  [09:20:42.848] [bbotk]                          191          -7.955217                      83     0
+INFO  [09:20:42.848] [bbotk]                          203          -9.743076                      83     0
+INFO  [09:20:42.848] [bbotk]  bracket repetition     regr.mse warnings errors runtime_learners
+INFO  [09:20:42.848] [bbotk]        1          1 3.319451e-06        0      0         2321.138
+INFO  [09:20:42.848] [bbotk]        1          1 2.942062e-06        0      0         3223.251
+INFO  [09:20:42.848] [bbotk]        1          1 3.228708e-06        0      0         4034.961
+INFO  [09:20:42.848] [bbotk]        1          1 3.429571e-06        0      0         2241.878
+INFO  [09:20:42.848] [bbotk]        1          1 3.015661e-06        0      0         2160.911
+INFO  [09:20:42.848] [bbotk]        1          1 2.825258e-06        0      0         2069.562
+INFO  [09:20:42.848] [bbotk]                                 uhash
+INFO  [09:20:42.848] [bbotk]  bbdc65f7-033b-4ebc-8c46-4ff31bda664f
+INFO  [09:20:42.848] [bbotk]  35ea6222-e9a8-44d7-8453-b96fdb06ad50
+INFO  [09:20:42.848] [bbotk]  76e46d60-3152-4b36-b96e-fe7f2c0d01f3
+INFO  [09:20:42.848] [bbotk]  a8d55488-5d29-49d3-8dac-36576d8250e0
+INFO  [09:20:42.848] [bbotk]  c1c7d9a9-1513-4c1a-ab36-2d5e138244dd
+INFO  [09:20:42.848] [bbotk]  ef6bdea0-86ec-4011-b47d-4d4bad784aae
+INFO  [09:20:42.895] [bbotk] Evaluating 3 configuration(s)
+INFO  [09:20:42.913] [mlr3] Running benchmark with 3 resampling iterations
+INFO  [09:20:42.938] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)
+INFO  [14:16:04.047] [mlr3] Applying learner 'torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr' on task 'factorszoo' (iter 1/1)

@@ -1,0 +1,188 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 21 (seed = 22) ...
+INFO  [04:13:55.679] [mlr3] Applying learner 'xgboost.tuned' on task 'factorszoo' (iter 4/17)
+INFO  [04:13:55.978] [bbotk] Starting to optimize 5 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:13:56.077] [bbotk] Evaluating 36 configuration(s)
+INFO  [04:13:56.158] [mlr3] Running benchmark with 36 resampling iterations
+INFO  [04:13:56.222] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:14:34.898] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:14:55.849] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:15:32.235] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:16:13.759] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:16:34.985] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:18:13.610] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:21:01.202] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:22:36.550] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:24:16.613] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:24:37.673] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:28:58.339] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:34:45.445] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:36:47.142] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:12.774] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:33.479] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:54.323] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:38:14.770] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:38:44.573] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:39:05.369] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:45:52.866] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:58:30.412] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:59:14.159] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:02:50.345] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:03:11.377] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:08:42.619] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:09:03.540] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:12:39.825] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:13:00.955] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:13:25.378] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:18:29.016] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:19:08.881] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:19:34.410] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:20:03.570] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:20:50.086] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:21:43.628] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:23:53.146] [mlr3] Finished benchmark
+INFO  [05:23:53.651] [bbotk] Result of batch 1:
+INFO  [05:23:53.660] [bbotk]        alpha max_depth         eta subsample nrounds stage bracket repetition
+INFO  [05:23:53.660] [bbotk]  -2.61775155         4 -7.05176263 0.3842869     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   4.24161565         3 -2.65421461 0.4417705     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   0.08528908         9 -7.66628956 0.3485935     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -1.45433118         6 -2.09079637 0.2927383     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   2.97194437         6 -2.17207640 0.6970497     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -1.89558299        15 -0.25367625 0.9301936     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -5.96059153        14 -5.96654970 0.2377739     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -2.06317644        12 -1.44526319 0.4948339     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.89399884         8 -8.79494543 0.9965646     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   0.20867915         4 -0.00525234 0.5028552     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -2.63006361        13 -7.20565636 0.8336784     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.34657546        16 -5.19691476 0.2693161     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -2.75903982        10 -8.66717962 0.2833704     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -0.77526317         2 -3.40121305 0.9610167     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   2.26193906         3 -1.10459288 0.9944940     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   1.97179241        15 -8.11187641 0.6069776     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   3.71420531         7 -6.06438531 0.8003620     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -1.53675234         3 -1.29502160 0.9841195     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   4.56387655        14 -3.52736582 0.1838211     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.44491438        15 -7.74054396 0.4459407     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.43520995        18 -7.87528565 0.6273629     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.85587305         6 -2.75468512 0.3295051     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -3.93398394        11 -3.55651469 0.7840008     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   2.36631850         4 -8.58400354 0.3780471     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -5.01000739        14 -6.16244797 0.7012684     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   4.34507316         5 -3.03457727 0.4781021     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -6.49645865        16 -7.09129802 0.2515649     139     0       2          1
+INFO  [05:23:53.660] [bbotk]   2.59622481        11 -0.70678549 0.3994008     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -6.43404584         2 -8.84496558 0.1943185     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -6.29669731        17 -4.84853775 0.4124001     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -0.99597121         7 -7.78872967 0.2484409     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -3.65389732         3 -0.49960951 0.6719897     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -1.91612414         3 -0.20132051 0.8898913     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -1.16954083         9 -7.38421629 0.3818670     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -6.77095105         6 -1.81057035 0.7246446     139     0       2          1
+INFO  [05:23:53.660] [bbotk]  -4.03545789         9 -1.36925446 0.2848206     139     0       2          1
+INFO  [05:23:53.660] [bbotk]        alpha max_depth         eta subsample nrounds stage bracket repetition
+INFO  [05:23:53.660] [bbotk]      regr.mse warnings errors runtime_learners
+INFO  [05:23:53.660] [bbotk]  3.430222e-06        0      0           38.645
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.927
+INFO  [05:23:53.660] [bbotk]  3.433393e-06        0      0           36.361
+INFO  [05:23:53.660] [bbotk]  3.434631e-06        0      0           41.502
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           21.201
+INFO  [05:23:53.660] [bbotk]  3.956565e-06        0      0           98.596
+INFO  [05:23:53.660] [bbotk]  3.416006e-06        0      0          167.560
+INFO  [05:23:53.660] [bbotk]  3.571742e-06        0      0           95.321
+INFO  [05:23:53.660] [bbotk]  3.432946e-06        0      0          100.036
+INFO  [05:23:53.660] [bbotk]  3.424781e-06        0      0           21.036
+INFO  [05:23:53.660] [bbotk]  3.430541e-06        0      0          260.639
+INFO  [05:23:53.660] [bbotk]  3.415661e-06        0      0          347.077
+INFO  [05:23:53.660] [bbotk]  3.432976e-06        0      0          121.668
+INFO  [05:23:53.660] [bbotk]  3.422441e-06        0      0           25.605
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.676
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.823
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.421
+INFO  [05:23:53.660] [bbotk]  3.438710e-06        0      0           29.776
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.771
+INFO  [05:23:53.660] [bbotk]  3.431325e-06        0      0          407.467
+INFO  [05:23:53.660] [bbotk]  3.431236e-06        0      0          757.520
+INFO  [05:23:53.660] [bbotk]  3.561599e-06        0      0           43.717
+INFO  [05:23:53.660] [bbotk]  3.427291e-06        0      0          216.161
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           21.002
+INFO  [05:23:53.660] [bbotk]  3.420482e-06        0      0          331.215
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           20.896
+INFO  [05:23:53.660] [bbotk]  3.427756e-06        0      0          216.257
+INFO  [05:23:53.660] [bbotk]  3.433787e-06        0      0           21.105
+INFO  [05:23:53.660] [bbotk]  3.433162e-06        0      0           24.398
+INFO  [05:23:53.660] [bbotk]  3.418046e-06        0      0          303.613
+INFO  [05:23:53.660] [bbotk]  3.432832e-06        0      0           39.837
+INFO  [05:23:53.660] [bbotk]  4.134907e-06        0      0           25.502
+INFO  [05:23:53.660] [bbotk]  3.624047e-06        0      0           29.138
+INFO  [05:23:53.660] [bbotk]  3.432122e-06        0      0           46.488
+INFO  [05:23:53.660] [bbotk]  3.890239e-06        0      0           53.516
+INFO  [05:23:53.660] [bbotk]  4.453675e-06        0      0          129.472
+INFO  [05:23:53.660] [bbotk]      regr.mse warnings errors runtime_learners
+INFO  [05:23:53.660] [bbotk]                                 uhash
+INFO  [05:23:53.660] [bbotk]  1f5e4fa0-5b9c-457f-9c2b-8178cab49986
+INFO  [05:23:53.660] [bbotk]  f9be27d4-ea12-4c38-924d-29d404b5ec93
+INFO  [05:23:53.660] [bbotk]  c9b289ff-9c82-4e09-bb66-ad8f27978a68
+INFO  [05:23:53.660] [bbotk]  2441a1db-775e-4a9f-b03f-7adbe931291c
+INFO  [05:23:53.660] [bbotk]  cb903b92-1575-41c8-b0ab-b46092258ada
+INFO  [05:23:53.660] [bbotk]  89a490d1-5a2f-4867-a9fb-032a739dc5c9
+INFO  [05:23:53.660] [bbotk]  5775df5e-7c97-44d5-a41b-253f45522e1f
+INFO  [05:23:53.660] [bbotk]  c1864684-15ce-4d3c-9d92-20b566e5b974
+INFO  [05:23:53.660] [bbotk]  4fe44801-20cd-4966-baf2-349ee0238719
+INFO  [05:23:53.660] [bbotk]  9ac4f741-1670-41fe-9be6-bdfecb9a73f0
+INFO  [05:23:53.660] [bbotk]  7cc78f05-fd29-48e2-b58d-2041847f7f6f
+INFO  [05:23:53.660] [bbotk]  acc415d9-3032-488e-8733-5dd8f22fb309
+INFO  [05:23:53.660] [bbotk]  8b375751-6b33-490f-adbc-ab56f4e5733d
+INFO  [05:23:53.660] [bbotk]  4d367bcd-645f-404c-be98-0131d07767b4
+INFO  [05:23:53.660] [bbotk]  cde73984-25d7-4fe5-bfbe-547942b5a6bb
+INFO  [05:23:53.660] [bbotk]  ecc92aa3-5e91-4ba0-836f-80e956af3f10
+INFO  [05:23:53.660] [bbotk]  4f8488f8-2129-4215-860e-600a29d3d28c
+INFO  [05:23:53.660] [bbotk]  4222abaa-3ce0-4afa-93db-839d34cea5bb
+INFO  [05:23:53.660] [bbotk]  16dbdbe0-77ec-4cff-947d-bd7b2b3de387
+INFO  [05:23:53.660] [bbotk]  680617fd-3627-4688-a1e2-608efc6c5290
+INFO  [05:23:53.660] [bbotk]  6b37461d-1639-42b1-96a3-28fa691aab4e
+INFO  [05:23:53.660] [bbotk]  b0405b46-084a-4a1b-a112-a36ed1d62b22
+INFO  [05:23:53.660] [bbotk]  7586b7a5-3157-428f-8b7a-4e12abaec847
+INFO  [05:23:53.660] [bbotk]  e1bc81ee-f9b5-4bd3-a5dc-72b4ae265de5
+INFO  [05:23:53.660] [bbotk]  8388cb35-dc14-4382-8ffa-2b4d4035027c
+INFO  [05:23:53.660] [bbotk]  cc42edec-9d20-4a26-b2a6-7649e96b92aa
+INFO  [05:23:53.660] [bbotk]  eefb2c7f-4e9c-4e64-9a55-6460072ae984
+INFO  [05:23:53.660] [bbotk]  6532c983-b703-4295-943d-bf4f0c4c3b74
+INFO  [05:23:53.660] [bbotk]  d5150046-3da1-4ed5-b598-f2533f0c01a7
+INFO  [05:23:53.660] [bbotk]  32997c78-f7d5-49ff-9d11-07640b26cfdb
+INFO  [05:23:53.660] [bbotk]  b9478ade-502d-4262-8e95-b09913d10009
+INFO  [05:23:53.660] [bbotk]  2c6415da-0375-4f05-a596-1b0f677d8ad6
+INFO  [05:23:53.660] [bbotk]  bd376f6e-fb3f-450f-9b80-6264c56a5378
+INFO  [05:23:53.660] [bbotk]  b72d5542-547d-470f-976b-f05cf337e26e
+INFO  [05:23:53.660] [bbotk]  e48ee1aa-376c-4529-bc39-dbc8d91e8048
+INFO  [05:23:53.660] [bbotk]  17ec1149-c648-4467-a24f-ac0b5005d62f
+INFO  [05:23:53.660] [bbotk]                                 uhash
+INFO  [05:23:53.823] [bbotk] Evaluating 15 configuration(s)
+INFO  [05:23:53.858] [mlr3] Running benchmark with 15 resampling iterations
+INFO  [05:23:53.883] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:25:19.629] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:26:46.846] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:57:44.379] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:59:12.795] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:00:59.153] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:02:27.540] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:04:29.900] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:05:57.846] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:27:19.331] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [06:56:55.536] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [07:13:03.110] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+Killed
+Cgroup mem limit exceeded: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=112277[21].admin,mems_allowed=0-1,oom_memcg=/pbs_jobs.service/jobid/112277[21].admin,task_memcg=/pbs_jobs.service/jobid/112277[21].admin,task=R,pid=1807332,uid=3107

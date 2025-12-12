@@ -72,7 +72,6 @@ if (interactive()) {
     labs(x = "", y = '')
 }
 
-
 # Create autotuners
 create_autotuner = function(learner, search_space, n_evals = 20, hyper = TRUE) {
   # Use random search for efficiency
@@ -281,70 +280,3 @@ file.create(sh_file_name)
 writeLines(sh_file, sh_file_name)
 
 # apptainer run image_estimation.sif h4_run_job.R 0
-
-
-
-# ARCHIVE AND HELP
-# add my pipes to mlr dictionary
-# pipes = as.data.table(mlr_pipeops)
-# pipes[grepl("linex", key)]
-# mlr_filters$add("gausscov_f1st", finautoml::FilterGausscovF1st)
-# # mlr_filters$add("gausscov_f3st", FilterGausscovF3st) # not found error
-# mlr_measures$add("linex", finautoml::Linex)
-# mlr_measures$add("adjloss2", finautoml::AdjLoss2)
-# mlr_measures$add("portfolio_ret", PortfolioRet)
-
-# # test MLP learner
-# mlp_graph = po("torch_ingress_num") %>>%
-#   po("nn_linear", out_features = 20) %>>%
-#   po("nn_relu") %>>%
-#   po("nn_head") %>>%
-#   po("torch_loss", loss = t_loss("mse")) %>>%
-#   po("torch_optimizer", optimizer = t_opt("adam", lr = 0.1)) %>>%
-#   po("torch_callbacks", callbacks = t_clbk("history")) %>>%
-#   po("torch_model_regr", batch_size = 16, epochs = 50, device = "cpu")
-
-# # cretate learners graph node
-# learners_l = list(
-#   ranger  = lrn("regr.ranger", id = "ranger"),
-#   xgboost = lrn("regr.xgboost", id = "xgboost"),
-#   # bart    = lrn("regr.bart", id = "bart", sigest = 1),
-#   nnet    = lrn("regr.nnet", id = "nnet", MaxNWts = 50000),
-#   mlp     = mlp_graph
-# )
-
-# # create regression average of all learners
-# choices = c("ranger", "xgboost", "bart", "nnet", "mlp")
-# learners = po("branch", choices) %>>%
-#   gunion(learners_l) %>>%
-#   po("unbranch")
-
-# # Hyperparameters
-# search_space = ps(
-#   # # scaling
-#   # scale_branch.selection = p_fct(levels = c("uniformization", "scale")),
-#   # histbin_sentiment.breaks = p_fct(
-#   #   levels = c("5", "10", "20", "50"),
-#   #   trafo = function(x, param_set) {
-#   #     switch(
-#   #       x,
-#   #       "5" = 5,
-#   #       "10" = 10,
-#   #       "20" = 20,
-#   #       "50" = 50
-#   #     )
-#   #   }
-#   # ),
-#   # models
-#   choose_learners.selection = p_fct(levels = choices),
-#   mlp.torch_model_regr.batch_size = p_int(lower = 8, upper = 128, tags = "tune", depends = choose_learners.selection == "mlp"),
-#   # mlp.torch_model_regr.patience = p_int(lower = 0, upper = 10, tags = "tune"),
-#   mlp.torch_optimizer.lr = p_dbl(lower = 1e-4, upper = 1e-1, logscale = TRUE, tags = "tune", depends = choose_learners.selection == "mlp"),
-#   mlp.torch_model_regr.epochs = p_int(lower = 20, upper = 200, tags = "tune", depends = choose_learners.selection == "mlp"),
-# )
-
-# # Learners without hyperparameter tuning
-# fixed_learners = list(
-#   ols = linear_learners$ols,
-#   pcr = linear_learners$pcr
-# )

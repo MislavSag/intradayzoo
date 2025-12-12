@@ -1,0 +1,328 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 50 (seed = 51) ...
+INFO  [04:35:52.120] [mlr3] Applying learner 'nnet.tuned' on task 'factorszoo' (iter 16/17)
+INFO  [04:35:52.333] [bbotk] Starting to optimize 3 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:35:52.422] [bbotk] Evaluating 6 configuration(s)
+INFO  [04:35:53.457] [mlr3] Running benchmark with 6 resampling iterations
+INFO  [04:35:53.509] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  12271
+initial  value 3474.354880 
+iter  10 value 132.925683
+iter  20 value 96.524537
+iter  30 value 80.392411
+iter  40 value 52.668565
+iter  50 value 2.627545
+iter  60 value 1.143114
+iter  70 value 0.723277
+iter  80 value 0.585327
+final  value 0.554356 
+stopped after 83 iterations
+INFO  [04:54:31.328] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  7363
+initial  value 601.078017 
+iter  10 value 95.856129
+iter  20 value 22.375910
+iter  30 value 1.862753
+iter  40 value 0.729212
+iter  50 value 0.584618
+iter  60 value 0.503661
+iter  70 value 0.449566
+iter  80 value 0.432026
+final  value 0.427545 
+stopped after 83 iterations
+INFO  [05:06:58.992] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  2455
+initial  value 39.574028 
+iter  10 value 6.177984
+iter  20 value 0.370089
+iter  30 value 0.335722
+iter  40 value 0.327840
+iter  50 value 0.321880
+iter  60 value 0.317637
+iter  70 value 0.316493
+iter  80 value 0.314117
+final  value 0.313253 
+stopped after 83 iterations
+INFO  [05:09:58.280] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  8181
+initial  value 603673.565400 
+iter  10 value 30.739509
+iter  20 value 24.084455
+iter  30 value 12.735008
+iter  40 value 1.863829
+iter  50 value 0.899429
+iter  60 value 0.817957
+iter  70 value 0.788175
+iter  80 value 0.769100
+final  value 0.767470 
+stopped after 83 iterations
+INFO  [05:19:22.252] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  2455
+initial  value 43088.466868 
+iter  10 value 19.182606
+iter  20 value 1.327752
+iter  30 value 0.368878
+iter  40 value 0.349243
+iter  50 value 0.347915
+iter  60 value 0.344099
+iter  70 value 0.342120
+iter  80 value 0.341666
+final  value 0.341620 
+stopped after 83 iterations
+INFO  [05:22:32.965] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  7363
+initial  value 71970.829081 
+iter  10 value 165.913004
+iter  20 value 8.795537
+iter  30 value 3.446621
+iter  40 value 1.427711
+iter  50 value 0.858048
+iter  60 value 0.558476
+iter  70 value 0.423852
+iter  80 value 0.389668
+final  value 0.382789 
+stopped after 83 iterations
+INFO  [05:31:15.450] [mlr3] Finished benchmark
+INFO  [05:31:15.572] [bbotk] Result of batch 1:
+INFO  [05:31:15.581] [bbotk]  size      decay maxit stage bracket repetition     regr.mse warnings errors
+INFO  [05:31:15.581] [bbotk]    15 0.06682590    83     0       1          1 4.486789e-06        0      0
+INFO  [05:31:15.581] [bbotk]     9 0.08111237    83     0       1          1 4.452560e-06        0      0
+INFO  [05:31:15.581] [bbotk]     3 0.08705016    83     0       1          1 4.460369e-06        0      0
+INFO  [05:31:15.581] [bbotk]    10 0.01894793    83     0       1          1 4.456881e-06        0      0
+INFO  [05:31:15.581] [bbotk]     3 0.04083985    83     0       1          1 4.455882e-06        0      0
+INFO  [05:31:15.581] [bbotk]     9 0.01892784    83     0       1          1 4.465246e-06        0      0
+INFO  [05:31:15.581] [bbotk]  runtime_learners                                uhash
+INFO  [05:31:15.581] [bbotk]          1117.782 98dfd39d-07ac-4b42-94c7-93185f81f215
+INFO  [05:31:15.581] [bbotk]           747.632 6d3ef9cc-6e87-4405-a616-778412633f25
+INFO  [05:31:15.581] [bbotk]           179.257 41b661da-878c-427c-899d-39ee43cf237f
+INFO  [05:31:15.581] [bbotk]           563.941 b53fe34e-9cef-4b36-9577-db8370db60af
+INFO  [05:31:15.581] [bbotk]           190.679 fe1fadaf-333d-4d70-8d7c-31141fad6642
+INFO  [05:31:15.581] [bbotk]           522.447 127e97c6-1368-42dc-98fa-913e8c60decd
+INFO  [05:31:15.623] [bbotk] Evaluating 3 configuration(s)
+INFO  [05:31:15.637] [mlr3] Running benchmark with 3 resampling iterations
+INFO  [05:31:15.667] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  8181
+initial  value 47514.341147 
+iter  10 value 55.609489
+iter  20 value 31.422215
+iter  30 value 26.378821
+iter  40 value 14.673885
+iter  50 value 2.279899
+iter  60 value 0.932442
+iter  70 value 0.617751
+iter  80 value 0.470019
+iter  90 value 0.406584
+iter 100 value 0.382877
+iter 110 value 0.369312
+iter 120 value 0.362298
+iter 130 value 0.356300
+iter 140 value 0.351542
+iter 150 value 0.347938
+iter 160 value 0.345046
+iter 170 value 0.341951
+iter 180 value 0.339805
+iter 190 value 0.338281
+iter 200 value 0.336407
+iter 210 value 0.334270
+iter 220 value 0.331798
+iter 230 value 0.330088
+iter 240 value 0.329014
+iter 250 value 0.328289
+iter 260 value 0.327602
+iter 270 value 0.326720
+iter 280 value 0.325944
+iter 290 value 0.325127
+iter 300 value 0.324594
+iter 310 value 0.324031
+iter 320 value 0.323102
+iter 330 value 0.322383
+iter 340 value 0.321717
+iter 350 value 0.321049
+iter 360 value 0.320441
+iter 370 value 0.319845
+iter 380 value 0.319313
+iter 390 value 0.318911
+iter 400 value 0.318476
+iter 410 value 0.318052
+iter 420 value 0.317585
+iter 430 value 0.317211
+iter 440 value 0.316676
+iter 450 value 0.316198
+iter 460 value 0.315678
+iter 470 value 0.315344
+iter 480 value 0.315013
+iter 490 value 0.314777
+iter 500 value 0.314457
+final  value 0.314457 
+stopped after 500 iterations
+INFO  [06:17:46.328] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  2455
+initial  value 3252.919565 
+iter  10 value 26.538085
+iter  20 value 21.661738
+iter  30 value 0.414641
+iter  40 value 0.393590
+iter  50 value 0.391151
+iter  60 value 0.388597
+iter  70 value 0.379625
+iter  80 value 0.355580
+iter  90 value 0.350472
+iter 100 value 0.336225
+iter 110 value 0.325322
+iter 120 value 0.323760
+iter 130 value 0.322159
+iter 140 value 0.321052
+iter 150 value 0.319635
+iter 160 value 0.319002
+iter 170 value 0.318628
+iter 180 value 0.317060
+iter 190 value 0.315448
+iter 200 value 0.314140
+iter 210 value 0.314034
+iter 220 value 0.313970
+iter 230 value 0.313414
+iter 240 value 0.311812
+iter 250 value 0.311804
+iter 260 value 0.311675
+iter 270 value 0.311606
+iter 280 value 0.311605
+final  value 0.311602 
+converged
+INFO  [06:27:20.650] [mlr3] Applying learner 'nnet' on task 'factorszoo' (iter 1/1)
+# weights:  7363
+initial  value 104915.429130 
+iter  10 value 98.382463
+iter  20 value 13.803987
+iter  30 value 5.077637
+iter  40 value 2.283739
+iter  50 value 0.714846
+iter  60 value 0.427385
+iter  70 value 0.400079
+iter  80 value 0.388004
+iter  90 value 0.383259
+iter 100 value 0.379682
+iter 110 value 0.378014
+iter 120 value 0.375142
+iter 130 value 0.372050
+iter 140 value 0.369055
+iter 150 value 0.366968
+iter 160 value 0.363936
+iter 170 value 0.361477
+iter 180 value 0.359341
+iter 190 value 0.358490
+iter 200 value 0.358181
+iter 210 value 0.357839
+iter 220 value 0.357482
+iter 230 value 0.356717
+iter 240 value 0.355634
+iter 250 value 0.352695
+iter 260 value 0.351297
+iter 270 value 0.350650
+iter 280 value 0.349180
+iter 290 value 0.347487
+iter 300 value 0.345049
+iter 310 value 0.342994
+iter 320 value 0.341563
+iter 330 value 0.340728
+iter 340 value 0.339919
+iter 350 value 0.339343
+iter 360 value 0.337985
+iter 370 value 0.335346
+iter 380 value 0.334409
+iter 390 value 0.332906
+iter 400 value 0.332175
+iter 410 value 0.332059
+iter 420 value 0.329498
+iter 430 value 0.328709
+iter 440 value 0.328664
+iter 450 value 0.328378
+iter 460 value 0.326377
+iter 470 value 0.326217
+iter 480 value 0.326166
+iter 490 value 0.325194
+iter 500 value 0.324420
+final  value 0.324420 
+stopped after 500 iterations
+INFO  [07:10:11.985] [mlr3] Finished benchmark
+INFO  [07:10:12.063] [bbotk] Result of batch 2:
+INFO  [07:10:12.070] [bbotk]  size      decay maxit stage bracket repetition     regr.mse warnings errors
+INFO  [07:10:12.070] [bbotk]    10 0.02078890   500     0       0          1 4.451444e-06        0      0
+INFO  [07:10:12.070] [bbotk]     3 0.06791786   500     0       0          1 4.463143e-06        0      0
+INFO  [07:10:12.070] [bbotk]     9 0.08111237   500     1       1          1 4.452390e-06        0      0
+INFO  [07:10:12.070] [bbotk]  runtime_learners                                uhash
+INFO  [07:10:12.070] [bbotk]          2790.631 0eb22846-dd12-4746-9fb2-e751fab6c67f
+INFO  [07:10:12.070] [bbotk]           574.291 95f35831-b8b0-42bc-89aa-2ef3a61ef263
+INFO  [07:10:12.070] [bbotk]          2571.304 00553686-0028-4c97-84f1-dd0c37af6016
+INFO  [07:10:12.105] [bbotk] Finished optimizing after 9 evaluation(s)
+INFO  [07:10:12.108] [bbotk] Result:
+INFO  [07:10:12.115] [bbotk]   size     decay maxit learner_param_vals  x_domain     regr.mse
+INFO  [07:10:12.115] [bbotk]  <int>     <num> <num>             <list>    <list>        <num>
+INFO  [07:10:12.115] [bbotk]     10 0.0207889   500          <list[4]> <list[3]> 4.451444e-06
+# weights:  8181
+initial  value 74623.184074 
+iter  10 value 32.915037
+iter  20 value 27.148118
+iter  30 value 8.244518
+iter  40 value 1.401226
+iter  50 value 0.799223
+iter  60 value 0.747677
+iter  70 value 0.721398
+iter  80 value 0.705996
+iter  90 value 0.695220
+iter 100 value 0.684160
+iter 110 value 0.675675
+iter 120 value 0.669885
+iter 130 value 0.663495
+iter 140 value 0.653781
+iter 150 value 0.640018
+iter 160 value 0.624974
+iter 170 value 0.613689
+iter 180 value 0.606799
+iter 190 value 0.597744
+iter 200 value 0.583007
+iter 210 value 0.568356
+iter 220 value 0.556799
+iter 230 value 0.546499
+iter 240 value 0.538166
+iter 250 value 0.530396
+iter 260 value 0.525213
+iter 270 value 0.521468
+iter 280 value 0.519100
+iter 290 value 0.515408
+iter 300 value 0.510106
+iter 310 value 0.506595
+iter 320 value 0.503655
+iter 330 value 0.500409
+iter 340 value 0.496244
+iter 350 value 0.493057
+iter 360 value 0.490389
+iter 370 value 0.487480
+iter 380 value 0.484938
+iter 390 value 0.482798
+iter 400 value 0.481940
+iter 410 value 0.481019
+iter 420 value 0.480066
+iter 430 value 0.479115
+iter 440 value 0.478177
+iter 450 value 0.477207
+iter 460 value 0.476055
+iter 470 value 0.474924
+iter 480 value 0.474003
+iter 490 value 0.473360
+iter 500 value 0.472599
+final  value 0.472599 
+stopped after 500 iterations

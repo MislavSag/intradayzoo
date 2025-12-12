@@ -1,0 +1,54 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 29 (seed = 30) ...
+INFO  [04:23:33.467] [mlr3] Applying learner 'xgboost.tuned' on task 'factorszoo' (iter 12/17)
+INFO  [04:23:33.780] [bbotk] Starting to optimize 5 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:23:33.890] [bbotk] Evaluating 36 configuration(s)
+INFO  [04:23:33.980] [mlr3] Running benchmark with 36 resampling iterations
+INFO  [04:23:34.051] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:24:18.263] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:28:07.207] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:33:49.258] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:34:26.239] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:35:06.963] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:45.105] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:41:46.225] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:42:23.707] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:44:44.558] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:45:53.329] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:46:39.070] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:48:49.060] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:50:15.188] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:00:46.155] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:01:23.974] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:10:44.210] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:14:06.135] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:18:52.889] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:20:17.994] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:23:34.877] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:24:16.344] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:24:53.808] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:25:37.863] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:26:24.313] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:27:01.771] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:27:39.152] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:33:39.767] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:34:17.083] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:34:57.814] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:35:34.979] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [05:36:12.398] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+Killed
+Cgroup mem limit exceeded: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=112277[29].admin,mems_allowed=0-1,oom_memcg=/pbs_jobs.service/jobid/112277[29].admin,task_memcg=/pbs_jobs.service/jobid/112277[29].admin,task=R,pid=4117023,uid=3107

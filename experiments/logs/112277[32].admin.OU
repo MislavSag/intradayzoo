@@ -1,0 +1,26 @@
+
+Attaching package: ‘batchtools’
+
+The following object is masked from ‘package:mlr3misc’:
+
+    chunk
+
+0
+Argument 1 is  FALSEReading registry in read-only mode.You can inspect results and errors, but cannot add, remove, submit or alter jobs in any way.If you need write-access, re-load the registry with `loadRegistry([...], writeable = TRUE)`.
+No readable configuration file found
+Get Job 
+Execute Job          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 2705888 144.6    5698884 304.4  2705888 144.6
+Vcells 4017224  30.7    8388608  64.0  4017224  30.7
+### [bt]: Generating problem instance for problem '53e1a7dcace45604' ...
+### [bt]: Applying algorithm 'run_learner' on problem '53e1a7dcace45604' for job 32 (seed = 33) ...
+INFO  [04:27:30.242] [mlr3] Applying learner 'xgboost.tuned' on task 'factorszoo' (iter 15/17)
+INFO  [04:27:30.518] [bbotk] Starting to optimize 5 parameter(s) with '<OptimizerBatchHyperband>' and '<TerminatorNone>'
+INFO  [04:27:30.621] [bbotk] Evaluating 36 configuration(s)
+INFO  [04:27:30.706] [mlr3] Running benchmark with 36 resampling iterations
+INFO  [04:27:30.772] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:28:26.626] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:16.043] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+INFO  [04:37:58.037] [mlr3] Applying learner 'xgboost' on task 'factorszoo' (iter 1/1)
+Killed
+Cgroup mem limit exceeded: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=112277[32].admin,mems_allowed=0-1,oom_memcg=/pbs_jobs.service/jobid/112277[32].admin,task_memcg=/pbs_jobs.service/jobid/112277[32].admin,task=R,pid=1407344,uid=3107

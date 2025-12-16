@@ -15,6 +15,50 @@ library(paradox)
 library(mlr3hyperband)
 
 
+# Custom PipeOp to filter rows during training but not prediction
+PipeOpFilterJumps = R6::R6Class(
+  "PipeOpFilterJumps",
+  inherit = mlr3pipelines::PipeOpTaskPreproc,
+  
+  public = list(
+    initialize = function(id = "filter_jumps") {
+      super$initialize(
+        id = id,
+        param_set = ps(),
+        packages = character(0),
+        task_type = "TaskRegr"
+      )
+    }
+  ),
+  
+  private = list(
+    .train_task = function(task) {
+      # During training: filter out rows where jump == 1
+      # Assumes 'jump' column is available in the task backend
+      task_data = task$data()
+      
+      # Get the jump column from backend (it should be in id columns or elsewhere)
+      if ("jump" %in% names(task$backend$data(rows = task$row_ids, cols = task$backend$colnames))) {
+        jump_data = task$backend$data(rows = task$row_ids, cols = "jump")
+        keep_rows = task$row_ids[jump_data$jump == 0]
+        task$filter(keep_rows)
+      } else {
+        warning("'jump' column not found in task backend. No filtering applied.")
+      }
+      
+      task
+    },
+    
+    .predict_task = function(task) {
+      # During prediction: keep all rows (do nothing)
+      task
+    }
+  )
+)
+
+# Register the custom PipeOp (optional, for convenience)
+mlr_pipeops$add("filter_jumps", PipeOpFilterJumps)
+
 # Import data
 factors = fread("data/factor_returns.csv")
 
@@ -22,16 +66,21 @@ factors = fread("data/factor_returns.csv")
 head(colnames(factors)); tail(colnames(factors))
 id_columns = c("datetime", "jump")
 factors[, year := data.table::year(datetime)]
+factors[, .(datetime, jump, target, targetc)]
+
+# Remove missing targets
+factors[, .SD, .SDcols = factors[, which(unlist(lapply(.SD, function(x) any(is.na(x)))))]]
+factors = na.omit(factors, cols = "target")
 
 # Define tasks
 task  = as_task_regr(factors[, .SD, .SDcols = -c("targetc")], "target", "factorszoo")
-taskc = as_task_regr(factors[, .SD, .SDcols = -c("target")], "targetc", "factorszooc")
+# taskc = as_task_regr(factors[, .SD, .SDcols = -c("target")], "targetc", "factorszooc")
 
 # set roles for id columns
 task$set_col_roles("year", "group")
 task$col_roles$feature = setdiff(task$col_roles$feature, id_columns)
-taskc$set_col_roles("year", "group")
-taskc$col_roles$feature = setdiff(taskc$col_roles$feature, id_columns)
+# taskc$set_col_roles("year", "group")
+# taskc$col_roles$feature = setdiff(taskc$col_roles$feature, id_columns)
 
 # Cross validation resampling parameters
 FIRST_YEAR = 2004
@@ -73,29 +122,41 @@ if (interactive()) {
 }
 
 # Create autotuners
-create_autotuner = function(learner, search_space, n_evals = 20, hyper = TRUE) {
-  # Use random search for efficiency
-  # tuner = tnr("random_search")
-  tuner   = tnr("hyperband", eta = 6)
+create_autotuner = function(
+  learner, 
+  tuner = tnr("hyperband", eta = 6),
+  search_space = NULL, 
+  n_evals = 3, 
+  hyper = TRUE, 
+  include_jumps = TRUE) {
   
   # Use inner resampling for validation (80/20 split)
   # This is the validation set mentioned in the paper
   inner_rsmp = rsmp("holdout", ratio = 0.8)
-  
+
   # Create autotuner
   at = auto_tuner(
     learner = learner,
     resampling = inner_rsmp,
     measure = msr("regr.mse"),
     search_space = search_space,
-    # terminator = trm("evals", n_evals = n_evals),
-    terminator = trm("none"),
-    # term_evals = n_evals,
+    terminator = if (tuner$label == "Hyperband") trm("none") else trm("evals", n_evals = n_evals),
     tuner = tuner
   )
   set_threads(at, n = threads)
   
   return(at)
+}
+
+# Test if training work with/without jumps
+if (interactive()) {
+  tsk_ = task$clone()
+  tsk_$filter(1:20000)
+  tsk_$data(cols = "jump")[jump == 1]
+  po = PipeOpFilterJumps$new()
+  r = po$train(list(tsk_))
+  print(tsk_$nrow)
+  print(r$output$nrow)
 }
 
 # Parameters
@@ -112,8 +173,21 @@ at_rf = create_autotuner(
     splitrule  = p_fct(levels = c("variance", "extratrees")),
     # num.trees  = p_int(10, 2000)
     num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
+  )
+)
+at_rf_adj = create_autotuner(
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.ranger", id = "ranger")) |>
+      as_learner(),
+  search_space = ps(
+    ranger.max.depth  = p_int(1, 15),
+    ranger.replace    = p_lgl(),
+    ranger.mtry.ratio = p_dbl(0.3, 1),
+    ranger.splitrule  = p_fct(levels = c("variance", "extratrees")),
+    # num.trees  = p_int(10, 2000)
+    ranger.num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
   ),
-  n_evals = n_evals
+  include_jumps = FALSE
 )
 
 # XGBOOST
@@ -126,8 +200,21 @@ at_xgboost = create_autotuner(
     subsample = p_dbl(0.1, 1),
     # nrounds   = p_int(1, 5000),
     nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
+  )
+)
+at_xgboost_adj = create_autotuner(
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.xgboost", id = "xgboost")) |>
+      as_learner(),
+  search_space = ps(
+    xgboost.alpha     = p_dbl(0.001, 100, logscale = TRUE),
+    xgboost.max_depth = p_int(1, 20),
+    xgboost.eta       = p_dbl(0.0001, 1, logscale = TRUE),
+    xgboost.subsample = p_dbl(0.1, 1),
+    # nrounds   = p_int(1, 5000),
+    xgboost.nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
   ),
-  n_evals = n_evals
+  include_jumps = FALSE
 )
 
 # NNET
@@ -138,8 +225,18 @@ at_nnet = create_autotuner(
     decay = p_dbl(lower = 0.0001, upper = 0.1),
     # maxit = p_int(lower = 50, upper = 500)
     maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
+  )
+)
+at_nnet_adj = create_autotuner(
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.nnet", id = "nnet", MaxNWts = 50000)) |>
+      as_learner(),
+  search_space = ps(
+    nnet.size  = p_int(lower = 2, upper = 15),
+    nnet.decay = p_dbl(lower = 0.0001, upper = 0.1),
+    nnet.maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
   ),
-  n_evals = n_evals
+  include_jumps = FALSE
 )
 
 # BART
@@ -148,10 +245,19 @@ at_bart = create_autotuner(
   search_space = ps(
     k      = p_dbl(lower = 1, upper = 8),
     numcut = p_int(lower = 30, upper = 200),
-    # ntree  = p_int(lower = 50, upper = 500),
     ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
+  )
+)
+at_bart_adj = create_autotuner(
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.bart", id = "bart", sigest = 1)) |>
+      as_learner(),
+  search_space = ps(
+    bart.k      = p_dbl(lower = 1, upper = 8),
+    bart.numcut = p_int(lower = 30, upper = 200),
+    bart.ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
   ),
-  n_evals = n_evals
+  include_jumps = FALSE
 )
 
 # NN
@@ -169,8 +275,17 @@ at_nn = create_autotuner(
     torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
     torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
     torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
-  ),
-  n_evals = n_evals
+  )
+)
+at_nn_adj = create_autotuner(
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", mlp_graph, id = "torch") |>
+      as_learner(),
+  search_space = ps(
+    torch.torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
+    torch.torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
+    torch.torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
+  )
 )
 
 # earth
@@ -183,11 +298,26 @@ at_earth = create_autotuner(
     pmethod = p_fct(levels = c("backward", "none", "exhaustive", "forward")), # Pruning method
     nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
   ),
-  n_evals = n_evals
+ )
+at_earth_adj = create_autotuner(
+  learner      =  PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.earth", id = "earth")) |>
+      as_learner(),
+  search_space = ps(
+    earth.degree  = p_int(lower = 1, upper = 3),                      # Max interaction degree
+    earth.penalty = p_dbl(lower = 1, upper = 5),                      # GCV penalty per knot
+    earth.nprune  = p_int(lower = 10, upper = 100),                   # Max terms after pruning
+    earth.pmethod = p_fct(levels = c("backward", "none", "exhaustive", "forward")), # Pruning method
+    earth.nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
+  ),
+  include_jumps = FALSE
 )
 
 # Mlr3 design
-autotuners = list(at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth)
+autotuners = list(
+  at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth,
+  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj
+)
 design = benchmark_grid(
   tasks = task,
   learners = autotuners, 
@@ -266,7 +396,7 @@ sh_file = sprintf("
 
 #PBS -N HFFZ
 #PBS -l ncpus=4
-#PBS -l mem=16GB
+#PBS -l mem=22GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments/logs

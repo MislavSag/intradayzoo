@@ -316,10 +316,60 @@ at_earth_adj = create_autotuner(
   include_jumps = FALSE
 )
 
+# GBM (Gradient Boosting Machine)
+at_gbm = create_autotuner(
+  learner      = lrn("regr.gbm", id = "gbm"),
+  search_space = ps(
+    interaction.depth = p_int(lower = 1, upper = 10),        # Tree depth
+    shrinkage         = p_dbl(lower = 0.001, upper = 0.1, logscale = TRUE), # Learning rate
+    bag.fraction      = p_dbl(lower = 0.5, upper = 1),       # Subsampling fraction
+    n.minobsinnode    = p_int(lower = 5, upper = 30),        # Min observations in terminal nodes
+    n.trees           = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET: number of trees
+  )
+)
+at_gbm_adj = create_autotuner(
+  learner      =  PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.gbm", id = "gbm")) |>
+      as_learner(),
+  search_space = ps(
+    gbm.interaction.depth = p_int(lower = 1, upper = 10),        # Tree depth
+    gbm.shrinkage         = p_dbl(lower = 0.001, upper = 0.1, logscale = TRUE), # Learning rate
+    gbm.bag.fraction      = p_dbl(lower = 0.5, upper = 1),       # Subsampling fraction
+    gbm.n.minobsinnode    = p_int(lower = 5, upper = 30),        # Min observations in terminal nodes
+    gbm.n.trees           = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET: number of trees
+  ),
+  include_jumps = FALSE
+)
+
+# LightGBM - Fast, efficient gradient boosting
+at_lightgbm = create_autotuner(
+  learner      = lrn("regr.lightgbm", id = "lightgbm"),
+  search_space = ps(
+    num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
+    learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
+    feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
+    bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
+    min_data_in_leaf   = p_int(lower = 5, upper = 50),
+    num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+  )
+)
+at_lightgbm_adj = create_autotuner(
+  learner      = lrn("regr.lightgbm", id = "lightgbm"),
+  search_space = ps(
+    num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
+    learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
+    feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
+    bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
+    min_data_in_leaf   = p_int(lower = 5, upper = 50),
+    num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+  ),
+  include_jumps = FALSE
+)
+
 # Mlr3 design
 autotuners = list(
-  at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth,
-  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj
+  at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, at_gbm, at_lightgbm,
+  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj, at_gbm_adj, at_lightgbm_adj,
 )
 design = benchmark_grid(
   tasks = task,

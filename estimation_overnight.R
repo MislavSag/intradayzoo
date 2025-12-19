@@ -296,7 +296,7 @@ sh_file = sprintf("
 
 #PBS -N HFFZO
 #PBS -l ncpus=4
-#PBS -l mem=8GB
+#PBS -l mem=24GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_overnight/logs

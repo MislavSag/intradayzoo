@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: mlrorg/mlr3-full:latest
+
+%post
+
+  # apt
+  apt update
+  apt install -y libssl-dev libxml2-dev libcurl4-openssl-dev build-essential g++ cmake
+  
+  # my packages
+  R --slave -e 'install.packages("remotes")'
+  R --slave -e 'remotes::install_github("MislavSag/mlr3finance")'
+  # R --slave -e 'install.packages("gausscov")'
+  
+  # batch
+  R --slave -e 'install.packages("mlr3mbo")'
+  R --slave -e 'install.packages("mlr3batchmark")'
+  R --slave -e 'install.packages("batchtools")'
+  R --slave -e 'install.packages("brew")'
+  
+  # torch and mlr3 torch
+  R --slave -e 'install.packages("torch")'
+  R --slave -e 'torch::install_torch()'
+  R --slave -e 'remotes::install_github("mlr-org/mlr3torch")'
+
+%runscript
+  Rscript $@

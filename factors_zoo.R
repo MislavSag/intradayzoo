@@ -6,6 +6,8 @@ library(roll)
 library(highfrequency)
 library(ggplot2)
 
+# TODO:
+# 1. Did I left time column in predictors?
 
 # CONFIG ---------------------------------------------------
 # Create data directory if it doesnt exists

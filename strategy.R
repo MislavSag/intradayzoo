@@ -98,12 +98,36 @@ predictions_dt = rbindlist(predictions_list)
 # Merge predictions_dt and spy
 attr(spy$datetime, "tz")
 attr(predictions_dt$datetime, "tz")
-back = spy[, .(datetime, target, target_lag)][predictions_dt, on = "datetime"]
+back = spy[, .(datetime, target)][predictions_dt, on = "datetime"]
 back = na.omit(back)
+back[, jump := 0]
+back[grepl("jump", learner_id), jump := 1]
+back[, learner_id := gsub("filter_jumps\\.", "", learner_id)]
+back[, learner_id := gsub("\\..*", "", learner_id)]
+back[jump == 1, learner_id := paste0(learner_id, "_jump")]
+back[, jump := NULL]
+cols = back[, unique(learner_id)]
+back = dcast(back, datetime + row_ids + iteration + target + truth ~ learner_id, value.var = "response") |>
+  _[, let(
+    ensamble_mean   = matrixStats::rowMeans2(as.matrix(.SD), na.rm = TRUE),
+    ensamble_median   = matrixStats::rowMedians(as.matrix(.SD), na.rm = TRUE),
+    ensamble_max   = matrixStats::rowMaxs(as.matrix(.SD), na.rm = TRUE),
+    ensamble_min   = matrixStats::rowMins(as.matrix(.SD), na.rm = TRUE)
+  ), by = datetime, .SDcols = cols] |>
+  melt(
+    id.vars = c("datetime", "row_ids", "iteration", "target", "truth"), 
+    variable.name = "learner_id",
+    value.name = "response",
+    variable.factor = FALSE
+  )
+
+# Approximat trading costs - Conservative estimate (market orders, small size):
+round_trip_cost = 0.00002 + 0.00002 + 0.00003  # spread both sides + fees = 0.00007 (0.007%)
+one_way_cost = 0.00002 + 0.000015 
 
 # S-sign trading rule
 back[, .(mean(target), median(target), mean(truth), median(truth))]
-half_spread = 0.00002
+half_spread = one_way_cost / 2
 back[, weight := NA_integer_]
 back[response > half_spread, weight := 1L]
 back[response < -half_spread, weight := -1L]
@@ -112,31 +136,59 @@ back[, weight := nafill(weight, type = "locf"), by = learner_id]
 back[, ret_truth  := truth * weight]
 back[, ret_target := target * weight]
 
+# remove na weight
+back = na.omit(back, cols = "weight")
+
+# Calculate actual trading costs per period
+back[, weight_change := abs(c(NA, diff(ifelse(weight == -1, 0, weight)))), by = learner_id]
+back[, trading_cost := weight_change * one_way_cost]
+back[is.na(trading_cost), trading_cost := 0]
+
+# Net returns after costs
+back[, ret_target_net := ret_target - trading_cost]
+
+# Summary: total costs per learner
+back[, .(
+  total_trades = sum(weight_change, na.rm = TRUE),
+  total_cost_bps = sum(trading_cost, na.rm = TRUE) * 10000,
+  avg_cost_per_period_bps = mean(trading_cost, na.rm = TRUE) * 10000
+), by = learner_id]
+
 # Predicttions to wide format
-port_mkt  = back[, .(datetime, ret_truth, ret_target, learner_id)] |>
-  _[, learner_id := gsub("\\..*", "", learner_id)] |>
+models_to_keep = back[, .N > 100000, by = learner_id][V1 == TRUE, learner_id]
+port_mkt  = back[, .(datetime, ret_truth, ret_target, ret_target_net, learner_id)] |>
   dcast(datetime ~ learner_id, value.var = "ret_truth") |>
-  _[, .SD, .SDcols = -"xgboost"] |>
+  _[, .SD, .SDcols = c("datetime", models_to_keep)] |>
   na.omit() |>
-  _[, ensamble := matrixStats::rowMeans2(as.matrix(.SD)), .SDcols = is.numeric] |>
   _[, lapply(.SD, function(x) Return.cumulative(x)), by = .(date = as.Date(datetime))] |>
   as.xts.data.table()
-port_spy  = back[, .(datetime, ret_truth, ret_target, learner_id)] |>
-  _[, learner_id := gsub("\\..*", "", learner_id)] |>
+port_spy  = back[, .(datetime, ret_truth, ret_target, ret_target_net, learner_id)] |>
   dcast(datetime ~ learner_id, value.var = "ret_target") |>
-  _[, .SD, .SDcols = -"xgboost"] |>
+  _[, .SD, .SDcols = c("datetime", models_to_keep)] |>
   na.omit() |>
-  _[, ensamble := matrixStats::rowMeans2(as.matrix(.SD)), .SDcols = is.numeric] |>
   _[, lapply(.SD, function(x) Return.cumulative(x)), by = .(date = as.Date(datetime))] |>
-  as.xts.data.table() 
-  
+  as.xts.data.table()
+port_spy_net  = back[, .(datetime, ret_truth, ret_target, ret_target_net, learner_id)] |>
+  dcast(datetime ~ learner_id, value.var = "ret_target_net") |>
+  _[, .SD, .SDcols = c("datetime", models_to_keep)] |>
+  na.omit() |>
+  _[, lapply(.SD, function(x) Return.cumulative(x)), by = .(date = as.Date(datetime))] |>
+  as.xts.data.table()
+
 # Performance
-melt(as.data.table(SharpeRatio.annualized(port_mkt, scale = 252)))
-melt(as.data.table(SharpeRatio.annualized(port_spy, scale = 252)))
+melt(as.data.table(SharpeRatio.annualized(port_mkt, scale = 252)))[order(-value)]
+melt(as.data.table(SharpeRatio.annualized(port_spy, scale = 252)))[order(-value)]
+melt(as.data.table(SharpeRatio.annualized(port_spy_net, scale = 252)))[order(-value)]  # Net of actual costs
+
+# Biggest decrease gorss / net
+x = melt(as.data.table(SharpeRatio.annualized(port_spy, scale = 252)))
+y = melt(as.data.table(SharpeRatio.annualized(port_spy_net, scale = 252)))  # Net of actual costs
+cbind(x[, 1], x[, 2] - y[, 2])[order(value)]
 
 # Capital curves
 charts.PerformanceSummary(port_mkt)
 charts.PerformanceSummary(port_spy)
+charts.PerformanceSummary(port_spy_net)  # Net of actual costs
 charts.PerformanceSummary(port_spy["2007/2008"])
 
 # Compare to QC
@@ -154,13 +206,22 @@ back[, {
 
 # Add data to Quant connect
 qc_data = predictions_dt[, .(datetime, learner = learner_id, resp = response)]
-qc_data[, learner := gsub("\\..*|_.*", "", learner)]
+qc_data[, jump := 0]
+qc_data[grepl("jump", learner), jump := 1]
+qc_data[, learner := gsub("filter_jumps\\.", "", learner)]
+qc_data[, learner := gsub("\\..*", "", learner)]
+qc_data[jump == 1, learner := paste0(learner, "_jump")]
+qc_data[, jump := NULL]
+models_to_keep = qc_data[, .N > 100000, by = learner][V1 == TRUE, learner]
+qc_data = qc_data[learner %in% models_to_keep]
 setorder(qc_data, learner, datetime)
 qc_data = dcast(qc_data, datetime ~ learner, value.var = "resp")
-keep_cols_with_no_na = !matrixStats::colAnyNAs(as.matrix(qc_data))
-keep_cols_with_no_na = names(keep_cols_with_no_na[keep_cols_with_no_na == TRUE])
-qc_data = qc_data[, .SD, .SDcols = keep_cols_with_no_na]
-qc_data[, ensamble := matrixStats::rowMeans2(as.matrix(.SD)), .SDcols = is.numeric]
+# keep_cols_with_no_na = !matrixStats::colAnyNAs(as.matrix(qc_data))
+# keep_cols_with_no_na = names(keep_cols_with_no_na[keep_cols_with_no_na == TRUE])
+qc_data = na.omit(qc_data)
+# qc_data = qc_data[, .SD, .SDcols = keep_cols_with_no_na]
+qc_data[, ensamble_median := matrixStats::rowMedians(as.matrix(.SD)), .SDcols = is.numeric]
+qc_data[, ensamble_mean   := matrixStats::rowMeans2(as.matrix(.SD)), .SDcols = is.numeric]
 qc_data[, datetime := as.character(datetime)]
 endpoint = storage_endpoint(Sys.getenv("ENDPOINT"), key=Sys.getenv("KEY"))
 cont = storage_container(endpoint, "qc-backtest")

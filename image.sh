@@ -1,3 +1,3 @@
 #!/bin/bash
 
-apptainer build image.sif image_est.def
+apptainer build image_est.sif image_est.def

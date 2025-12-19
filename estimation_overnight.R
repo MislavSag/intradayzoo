@@ -198,15 +198,30 @@ at_gbm = create_autotuner(
   )
 )
 
+# LightGBM - Fast, efficient gradient boosting
+at_lightgbm = create_autotuner(
+  learner      = lrn("regr.lightgbm", id = "lightgbm"),
+  search_space = ps(
+    num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
+    learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
+    feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
+    bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
+    min_data_in_leaf   = p_int(lower = 5, upper = 50),
+    num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+  )
+)
+
 # Mlr3 design
 autotuners = list(
   at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth,
-  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj
+  at_gbm, at_lightgbm
 )
 design = benchmark_grid(
   tasks = task,
   learners = autotuners, 
-  resamplings = rsmp("gap_cv", initial_window = train_size_years_init, horizon = 1, gap = 0, step = 1, rolling = FALSE)
+  resamplings = rsmp(
+    "gap_cv", initial_window = train_size_years_init, 
+    horizon = 1, gap = 0, step = 1, rolling = FALSE)
 )
 
 # Checks
@@ -232,7 +247,7 @@ if (interactive()) {
   )
 } else {
   reg = makeExperimentRegistry(
-    file.dir = "./experiments",
+    file.dir = "./experiments_overnight",
     seed = 1,
     packages = packages
   )
@@ -273,24 +288,24 @@ if (interactive()) {
 }
 
 # create sh file
-reg_folder = if (interactive()) "experiments_test" else "experiments"
+reg_folder = if (interactive()) "experiments_test" else "experiments_overnight"
 reg = loadRegistry(reg_folder, reg_folder, writeable = TRUE)
 ids = findNotDone(reg = reg)
 sh_file = sprintf("
 #!/bin/bash
 
-#PBS -N HFFZ
+#PBS -N HFFZO
 #PBS -l ncpus=4
-#PBS -l mem=22GB
+#PBS -l mem=8GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
-#PBS -o experiments/logs
+#PBS -o experiments_overnight/logs
 #PBS -j oe
 
 cd ${PBS_O_WORKDIR}
 apptainer run image.sif run_job.R 0
 ", nrow(ids))
-sh_file_name = "padobran.sh"
+sh_file_name = "padobran_overnight.sh"
 file.create(sh_file_name)
 writeLines(sh_file, sh_file_name)
 

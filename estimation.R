@@ -355,12 +355,12 @@ at_lightgbm = create_autotuner(
 at_lightgbm_adj = create_autotuner(
   learner      = lrn("regr.lightgbm", id = "lightgbm"),
   search_space = ps(
-    num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
-    learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
-    feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
-    bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
-    min_data_in_leaf   = p_int(lower = 5, upper = 50),
-    num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+    lightgbm.num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
+    lightgbm.learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
+    lightgbm.feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
+    lightgbm.bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
+    lightgbm.min_data_in_leaf   = p_int(lower = 5, upper = 50),
+    lightgbm.num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
   ),
   include_jumps = FALSE
 )
@@ -368,7 +368,8 @@ at_lightgbm_adj = create_autotuner(
 # Mlr3 design
 autotuners = list(
   at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, at_gbm, at_lightgbm,
-  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj, at_gbm_adj, at_lightgbm_adj
+  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj, 
+  at_gbm_adj, at_lightgbm_adj
 )
 design = benchmark_grid(
   tasks = task,

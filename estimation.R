@@ -67,7 +67,6 @@ factors = fread("data/factor_returns.csv")
 # Prepare data
 head(colnames(factors)); tail(colnames(factors))
 id_columns = c("datetime", "jump")
-factors[, with_tz(datetime, tz)]
 factors[, year := data.table::year(datetime)]
 factors[, .(datetime, jump, target, targetc)]
 

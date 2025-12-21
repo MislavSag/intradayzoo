@@ -368,7 +368,7 @@ at_lightgbm_adj = create_autotuner(
 # Mlr3 design
 autotuners = list(
   at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, at_gbm, at_lightgbm,
-  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj, at_gbm_adj, at_lightgbm_adj,
+  at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj, at_gbm_adj, at_lightgbm_adj
 )
 design = benchmark_grid(
   tasks = task,

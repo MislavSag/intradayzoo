@@ -456,7 +456,7 @@ sh_file = sprintf("
 #PBS -j oe
 
 cd ${PBS_O_WORKDIR}
-apptainer run image.sif run_job.R 0
+apptainer run image.sif run_job.R 0 experiments
 ", nrow(ids))
 sh_file_name = "padobran.sh"
 file.create(sh_file_name)

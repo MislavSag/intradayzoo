@@ -25,14 +25,16 @@ library(brew)
 args = commandArgs(trailingOnly = TRUE)
 
 # Ensure there are enough arguments
-if(length(args) < 1) {
-  stop("Not enough arguments. Please provide id_1 and id_2.")
+if(length(args) < 2) {
+  stop("Not enough arguments. Please provide residue (0/1) and experiment_dir.")
 }
 
 # Assign the arguments to variables
 cat(args, sep = "\n")
 residue = as.logical(as.integer(args[1]))
-cat("Argument 1 is ", residue)
+experiment_dir = args[2]
+cat("Argument 1 (residue) is ", residue, "\n")
+cat("Argument 2 (experiment_dir) is ", experiment_dir, "\n")
 
 
 # UTILS -------------------------------------------------------------------
@@ -122,9 +124,12 @@ UpdateBuffer = R6Class(
 # RUN JOB -----------------------------------------------------------------
 # load registry
 if (interactive()) {
-  reg = loadRegistry("experiments_test")
+  # Default to experiments_test when running interactively
+  experiment_dir = "experiments_test"
+  reg = loadRegistry(experiment_dir)
 } else {
-  reg = loadRegistry("experiments")
+  # Use the experiment_dir from command line arguments
+  reg = loadRegistry(experiment_dir)
 }
 
 # extract integer

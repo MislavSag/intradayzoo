@@ -353,7 +353,9 @@ at_lightgbm = create_autotuner(
   )
 )
 at_lightgbm_adj = create_autotuner(
-  learner      = lrn("regr.lightgbm", id = "lightgbm"),
+  learner      = PipeOpFilterJumps$new() %>>%
+      po("learner", lrn("regr.lightgbm", id = "lightgbm")) |>
+      as_learner(),
   search_space = ps(
     lightgbm.num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
     lightgbm.learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),

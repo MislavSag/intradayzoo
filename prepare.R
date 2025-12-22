@@ -1,9 +1,9 @@
 library(arrow)
 library(dplyr)
-library(fastverse)
 library(lubridate)
 library(ggplot2)
 library(patchwork)
+library(data.table)
 
 
 # Globals

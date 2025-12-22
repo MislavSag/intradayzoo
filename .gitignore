@@ -1,6 +1,8 @@
 experiments_test/
 experiments/
 experiments_v1/
+experiments_overnight/
+experiments*
 .vscode
 .Rproj.user
 data/

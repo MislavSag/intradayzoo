@@ -367,9 +367,9 @@ ids = findNotDone(reg = reg)
 sh_file = sprintf("
 #!/bin/bash
 
-#PBS -N HFFZ
+#PBS -N HFZS
 #PBS -l ncpus=4
-#PBS -l mem=22GB
+#PBS -l mem=36GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_panel/logs

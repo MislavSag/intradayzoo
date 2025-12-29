@@ -44,6 +44,7 @@ From: r-base:4.5.2
 
   R --slave -e 'install.packages("fastICA")'
   R --slave -e 'install.packages("lightgbm")'
+  R --slave -e 'install.packages("Cubist")'
   R --slave -e 'install.packages("earth")'
   R --slave -e 'install.packages("kknn")'
   R --slave -e 'install.packages("kernlab")'

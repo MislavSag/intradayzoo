@@ -289,7 +289,8 @@ at_cubist = create_autotuner(
 )
 
 # Mlr3 design
-autotuners = list(at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, at_gbm, at_lightgbm)
+autotuners = list(at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, 
+  at_gbm, at_lightgbm, at_cubist)
 design = benchmark_grid(
   tasks = task,
   learners = autotuners, 
@@ -319,7 +320,7 @@ if (interactive()) {
   )
 } else {
   reg = makeExperimentRegistry(
-    file.dir = "./experiments",
+    file.dir = "./experiments_panel",
     seed = 1,
     packages = packages
   )
@@ -360,7 +361,7 @@ if (interactive()) {
 }
 
 # create sh file
-reg_folder = if (interactive()) "experiments_test" else "experiments"
+reg_folder = if (interactive()) "experiments_test" else "experiments_panel"
 reg = loadRegistry(reg_folder, reg_folder, writeable = TRUE)
 ids = findNotDone(reg = reg)
 sh_file = sprintf("
@@ -371,13 +372,13 @@ sh_file = sprintf("
 #PBS -l mem=22GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
-#PBS -o experiments/logs
+#PBS -o experiments_panel/logs
 #PBS -j oe
 
 cd ${PBS_O_WORKDIR}
-apptainer run image.sif run_job.R 0 experiments
+apptainer run image.sif run_job.R 0 experiments_panel
 ", nrow(ids))
-sh_file_name = "padobran.sh"
+sh_file_name = "padobran_panel.sh"
 file.create(sh_file_name)
 writeLines(sh_file, sh_file_name)
 

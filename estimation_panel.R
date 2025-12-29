@@ -61,6 +61,7 @@ mlr_pipeops$add("filter_jumps", PipeOpFilterJumps)
 
 # Import data
 factors = fread("data/factor_returns.csv")
+factors[, datetime := as.POSIXct(datetime, tz = "America/New_York")]
 
 # Prepare data
 head(colnames(factors)); tail(colnames(factors))
@@ -73,8 +74,8 @@ factors[, names(.SD) := NULL, .SDcols = data.table::patterns("target")]
 
 # Import prices data for symbols we want trade and caluclate target variables
 prices = fread("data/ohlcv_15min.csv")
-prices[, date := with_tz(date, tzone = "America/New_York")]
-# prices = dcast(prices, date ~ symbol, value.var = "target")
+# prices[, date := with_tz(date, tzone = "America/New_York")]
+prices[, date := as.POSIXct(date, tz = "America/New_York")]
 
 # Merge target and factors
 factors = merge(prices, factors, by.x = "date", by.y = "datetime", all.x = TRUE, all.y = FALSE)

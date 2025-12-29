@@ -13,7 +13,6 @@ library(mlr3torch)
 library(mlr3finance)
 library(paradox)
 library(mlr3hyperband)
-library(arrow)
 
 
 # Custom PipeOp to filter rows during training but not prediction

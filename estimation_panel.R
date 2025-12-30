@@ -81,10 +81,12 @@ prices[, date := as.POSIXct(date, tz = "America/New_York")]
 factors = merge(prices, factors, by.x = "date", by.y = "datetime", all.x = TRUE, all.y = FALSE)
 
 # Remove missing targets
-factors[, .SD, .SDcols = factors[, which(unlist(lapply(.SD, function(x) any(is.na(x)))))]]
 factors = na.omit(factors)
 factors[, symbol := as.factor(symbol)]
 factors[, .(date, symbol, target, jkp__seas_2_5an_day)]
+
+# Check for truth error
+factors[, .(min(date), max(date))]
 
 # Define tasks
 task  = as_task_regr(factors, "target", "pool")
@@ -94,7 +96,7 @@ task$set_col_roles("year", "group")
 task$col_roles$feature = setdiff(task$col_roles$feature, c("date", "jump"))
 
 # Cross validation resampling parameters
-FIRST_YEAR = 2004
+FIRST_YEAR = 2007
 train_size_years_init = FIRST_YEAR - factors[, min(year)]
 
 # Test rolling cross validation
@@ -141,6 +143,16 @@ create_autotuner = function(
   hyper = TRUE, 
   include_jumps = TRUE) {
   
+  # Check factors
+  if (!("factor" %in% learner$feature_types)) {
+    cat("Factor endoding for learner", learner$id)
+    learner = po("removeconstants") %>>%
+      po("collapsefactors", no_collapse_above_prevalence = 0.01) %>>%
+      po("encode", method = "one-hot") %>>%
+      po("learner", learner) |>
+      as_learner()
+  }
+
   # Use inner resampling for validation (80/20 split)
   # This is the validation set mentioned in the paper
   inner_rsmp = rsmp("holdout", ratio = 0.8)
@@ -369,7 +381,7 @@ sh_file = sprintf("
 
 #PBS -N HFZS
 #PBS -l ncpus=4
-#PBS -l mem=36GB
+#PBS -l mem=56GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_panel/logs

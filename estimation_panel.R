@@ -151,7 +151,6 @@ create_autotuner = function(
       po("encode", method = "one-hot") %>>%
       po("learner", learner) |>
       as_learner()
-    learner$id = "torch"
   }
 
   # Check search space

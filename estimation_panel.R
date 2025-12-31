@@ -145,14 +145,22 @@ create_autotuner = function(
   
   # Check factors
   if (!("factor" %in% learner$feature_types)) {
-    cat("Factor endoding for learner", learner$id)
+    cat("Factor encoding for learner", learner$id)
     learner = po("removeconstants") %>>%
       po("collapsefactors", no_collapse_above_prevalence = 0.01) %>>%
       po("encode", method = "one-hot") %>>%
       po("learner", learner) |>
       as_learner()
+    learner$id = "torch"
   }
 
+  # Check search space
+  sp = as.data.table(learner$param_set)
+  if (any((search_space$ids() %in% sp$id) == FALSE)) {
+    print(sp$id)
+    stop("Check search space!")
+  }
+ 
   # Use inner resampling for validation (80/20 split)
   # This is the validation set mentioned in the paper
   inner_rsmp = rsmp("holdout", ratio = 0.8)
@@ -203,12 +211,12 @@ at_rf = create_autotuner(
 at_xgboost = create_autotuner(
   learner      = lrn("regr.xgboost", id = "xgboost"),
   search_space = ps(
-    alpha     = p_dbl(0.001, 100, logscale = TRUE),
-    max_depth = p_int(1, 20),
-    eta       = p_dbl(0.0001, 1, logscale = TRUE),
-    subsample = p_dbl(0.1, 1),
+    xgboost.alpha     = p_dbl(0.001, 100, logscale = TRUE),
+    xgboost.max_depth = p_int(1, 20),
+    xgboost.eta       = p_dbl(0.0001, 1, logscale = TRUE),
+    xgboost.subsample = p_dbl(0.1, 1),
     # nrounds   = p_int(1, 5000),
-    nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
+    xgboost.nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
   )
 )
 
@@ -245,9 +253,9 @@ mlp_graph = po("torch_ingress_num") %>>%
 at_nn = create_autotuner(
   learner      = mlp_graph,
   search_space = ps(
-    torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
-    torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
-    torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
   )
 )
 
@@ -292,11 +300,11 @@ at_lightgbm = create_autotuner(
 at_cubist = create_autotuner(
   learner      = lrn("regr.cubist", id = "cubist"),
   search_space = ps(
-    committees = p_int(lower = 1, upper = 100, tags = "budget"),  # BUDGET: number of models (ensemble)
-    neighbors  = p_int(lower = 0, upper = 9),                     # Instance-based correction (0 = off)
+    committees = p_int(lower = 1, upper = 50, tags = "budget"),  # BUDGET: number of models (ensemble)
+    neighbors  = p_int(lower = 0, upper = 7),                     # Instance-based correction (0 = off)
     unbiased   = p_lgl(),                                         # Use unbiased rules
-    rules      = p_int(lower = 10, upper = 100),                  # Max number of rules
-    extrapolation = p_dbl(lower = 0, upper = 100)                 # Extrapolation percentage
+    rules      = p_int(lower = 10, upper = 70),                  # Max number of rules
+    extrapolation = p_dbl(lower = 0, upper = 70)                 # Extrapolation percentage
   )
 )
 
@@ -381,7 +389,7 @@ sh_file = sprintf("
 
 #PBS -N HFZS
 #PBS -l ncpus=4
-#PBS -l mem=56GB
+#PBS -l mem=100GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_panel/logs

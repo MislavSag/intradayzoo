@@ -80,6 +80,11 @@ prices[, date := as.POSIXct(date, tz = "America/New_York")]
 # Merge target and factors
 factors = merge(prices, factors, by.x = "date", by.y = "datetime", all.x = TRUE, all.y = FALSE)
 
+# Shift all factors
+factor_cols = setdiff(colnames(factors), c("date", "symbol", "target", "jump", "year"))
+setorder(factors, symbol, date)
+factors[, names(.SD) := lapply(.SD, shift), .SDcols = factor_cols, by = symbol]
+
 # Remove missing targets
 factors = na.omit(factors)
 factors[, symbol := as.factor(symbol)]
@@ -388,7 +393,7 @@ sh_file = sprintf("
 
 #PBS -N HFZS
 #PBS -l ncpus=4
-#PBS -l mem=100GB
+#PBS -l mem=96GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_panel/logs

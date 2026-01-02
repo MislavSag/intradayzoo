@@ -108,12 +108,14 @@ ohlcv[, .(close = data.table::last(close)), by = .(symbol, date = as.IDate(date)
 ohlcv[, time := as.ITime(date)]
 ohlcv_intra = ohlcv[time != as.ITime("09:30:00")]
 ohlcv_intra[, interval_15min := ceiling_date(date, unit = "15 minutes")]
-factor_cols = setdiff(names(factors_intra), c("datetime", "interval_15min", "time"))
 ohlcv_intra = ohlcv_intra[, .(
   open  = data.table::first(open),
   close = data.table::last(close)
 ), by = .(symbol, date = interval_15min)]
 ohlcv_intra[, target := close / open - 1]
+setorder(ohlcv_intra, symbol, date)
+# ohlcv_intra[, .(date, target, shift(target, 1L, "lead")), by = symbol]
+# ohlcv_intra[, target := shift(target, 1L, "lead"), by = symbol]
 ohlcv_intra = ohlcv_intra[, .(symbol, date, target)]
 
 # Save

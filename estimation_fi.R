@@ -130,7 +130,7 @@ create_autotuner = function(
   tuner = tnr("hyperband", eta = 6),
   search_space = NULL, 
   n_evals = 3, 
-  filter_frac = 0.1,
+  filter_frac = 0.01,
   hyper = TRUE, 
   include_jumps = TRUE) {
   

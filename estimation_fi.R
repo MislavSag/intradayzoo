@@ -519,20 +519,17 @@ ids = findNotDone(reg = reg)
 sh_file = sprintf("
 #!/bin/bash
 
-#PBS -N HFFZ
+#PBS -N HFFZFI
 #PBS -l ncpus=4
-#PBS -l mem=22GB
+#PBS -l mem=52GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
-#PBS -o experiments/logs
+#PBS -o experiments_fi/logs
 #PBS -j oe
 
 cd ${PBS_O_WORKDIR}
-apptainer run image.sif run_job.R 0 experiments
+apptainer run image.sif run_job.R 0 experiments_fi
 ", nrow(ids))
-sh_file_name = "padobran.sh"
+sh_file_name = "padobran_fi.sh"
 file.create(sh_file_name)
 writeLines(sh_file, sh_file_name)
-
-# apptainer run image_estimation.sif h4_run_job.R 0
-

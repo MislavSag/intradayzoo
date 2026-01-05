@@ -472,7 +472,7 @@ if (interactive()) {
   )
 } else {
   reg = makeExperimentRegistry(
-    file.dir = "./experiments",
+    file.dir = "./experiments_fi",
     seed = 1,
     packages = packages
   )
@@ -513,7 +513,7 @@ if (interactive()) {
 }
 
 # create sh file
-reg_folder = if (interactive()) "experiments_test" else "experiments"
+reg_folder = if (interactive()) "experiments_test" else "experiments_fi"
 reg = loadRegistry(reg_folder, reg_folder, writeable = TRUE)
 ids = findNotDone(reg = reg)
 sh_file = sprintf("

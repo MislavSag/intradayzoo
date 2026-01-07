@@ -16,6 +16,11 @@ From: mlrorg/mlr3-full:latest
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::pak(c( \
                   'gausscov', \
+                  'praznik', \
+                  'FSelectorRcpp', \
+                  'care', \
+                  'caret', \
+                  'Boruta', \
                   'MislavSag/mlr3finance' \
                 ), dependencies='hard', ask=FALSE)"
 

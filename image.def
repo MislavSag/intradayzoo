@@ -3,9 +3,24 @@ From: r-base:4.5.2
 
 %post
 
-  # System dependencies - install EVERYTHING up front
-  apt-get update -qq && apt-get install -y --no-install-recommends \
+  # Fix package conflicts - upgrade all packages first
+  apt-get update -qq
+  apt-get upgrade -y
+  
+  # Install system dependencies in smaller groups to avoid conflicts
+  # Core build tools first
+  apt-get install -y --no-install-recommends \
     curl \
+    wget \
+    ca-certificates \
+    build-essential \
+    g++ \
+    gfortran \
+    cmake \
+    git
+
+  # Development libraries
+  apt-get install -y --no-install-recommends \
     pkg-config \
     libcurl4-openssl-dev \
     libssl-dev \
@@ -14,13 +29,12 @@ From: r-base:4.5.2
     libfreetype6-dev \
     libfribidi-dev \
     libharfbuzz-dev \
-    libtiff-dev \
-    libjpeg-dev \
     libpng-dev \
-    build-essential \
-    g++ \
-    cmake \
-    gfortran \
+    libjpeg-dev \
+    libtiff-dev
+
+  # Math and GIS libraries
+  apt-get install -y --no-install-recommends \
     libgmp3-dev \
     libmpfr-dev \
     libgsl-dev \
@@ -29,40 +43,37 @@ From: r-base:4.5.2
     libudunits2-dev \
     libgdal-dev \
     libproj-dev \
-    libgeos-dev \
+    libgeos-dev
+
+  # Additional tools (skip Java and pandoc - not critical for mlr3)
+  apt-get install -y --no-install-recommends \
     libglpk-dev \
     libglu1-mesa-dev \
     libgl1-mesa-dev \
     libx11-dev \
     libprotobuf-dev \
     protobuf-compiler \
-    libprotoc-dev \
     libhiredis-dev \
     libgit2-dev \
-    git \
-    python3 \
-    default-jdk \
-    pandoc
+    python3
 
   # Install rust for polars
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   export PATH="/root/.cargo/bin:${PATH}"
 
-  # Install pak first
+  # Install pak
   R --slave -e 'install.packages("pak", repos = "https://cloud.r-project.org/")'
 
-  # Install R packages with system requirements DISABLED
-  # NOT_CRAN speeds up polars installation
-  # PKG_SYSREQS=false prevents pak from trying to install system deps (already done above)
+  # Install R packages - disable system requirements since we installed manually
   R --slave -e "Sys.setenv(NOT_CRAN = 'true', PKG_SYSREQS = 'false'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
 
-  # Install torch separately (requires special handling)
+  # Install torch
   R --slave -e "pak::pak('torch'); torch::install_torch()"
 
-  # Install CatBoost from binary (faster than compilation)
+  # Install CatBoost
   R --slave -e "remotes::install_url('https://github.com/catboost/catboost/releases/download/v1.2.7/catboost-R-linux-x86_64-1.2.7.tgz', INSTALL_opts = c('--no-multiarch', '--no-test-load'))"
 
-  # Clean up apt cache after all installs complete
+  # Cleanup
   rm -rf /var/lib/apt/lists/*
 
 %runscript

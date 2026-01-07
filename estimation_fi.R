@@ -211,23 +211,18 @@ at_rf = create_autotuner(
     ranger.num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
   )
 )
-
-if (isTRUE(JUMP)) {
-  at_rf_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.ranger", id = "ranger")) |>
-        as_learner(),
-    search_space = ps(
-      ranger.max.depth  = p_int(1, 15),
-      ranger.replace    = p_lgl(),
-      ranger.mtry.ratio = p_dbl(0.3, 1),
-      ranger.splitrule  = p_fct(levels = c("variance", "extratrees")),
-      # num.trees  = p_int(10, 2000)
-      ranger.num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
-    ),
-    include_jumps = FALSE
-  )
-}
+at_rf_adj = create_autotuner(
+  learner      = lrn("regr.ranger", id = "ranger_jump"),
+  search_space = ps(
+    ranger_jump.max.depth  = p_int(1, 15),
+    ranger_jump.replace    = p_lgl(),
+    ranger_jump.mtry.ratio = p_dbl(0.3, 1),
+    ranger_jump.splitrule  = p_fct(levels = c("variance", "extratrees")),
+    # num.trees  = p_int(10, 2000)
+    ranger_jump.num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
+  ),
+  filter_jumps = TRUE
+)
 
 # XGBOOST
 at_xgboost = create_autotuner(
@@ -241,22 +236,18 @@ at_xgboost = create_autotuner(
     xgboost.nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
   )
 )
-if (isTRUE(JUMP)) {
-  at_xgboost_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.xgboost", id = "xgboost")) |>
-        as_learner(),
-    search_space = ps(
-      xgboost.alpha     = p_dbl(0.001, 100, logscale = TRUE),
-      xgboost.max_depth = p_int(1, 20),
-      xgboost.eta       = p_dbl(0.0001, 1, logscale = TRUE),
-      xgboost.subsample = p_dbl(0.1, 1),
-      # nrounds   = p_int(1, 5000),
-      xgboost.nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
-    ),
-    include_jumps = FALSE
-  )
-}
+at_xgboost_adj = create_autotuner(
+learner      = lrn("regr.xgboost", id = "xgboost_jump"),
+  search_space = ps(
+    xgboost_jump.alpha     = p_dbl(0.001, 100, logscale = TRUE),
+    xgboost_jump.max_depth = p_int(1, 20),
+    xgboost_jump.eta       = p_dbl(0.0001, 1, logscale = TRUE),
+    xgboost_jump.subsample = p_dbl(0.1, 1),
+    # nrounds   = p_int(1, 5000),
+    xgboost_jump.nrounds   = p_int(30, 5000, tags = "budget")  # Budget parameter
+  ),
+  filter_jumps = TRUE
+)
 
 # NNET
 at_nnet = create_autotuner(
@@ -268,19 +259,15 @@ at_nnet = create_autotuner(
     nnet.maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
   )
 )
-if (isTRUE(JUMP)) {
-  at_nnet_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.nnet", id = "nnet", MaxNWts = 50000)) |>
-        as_learner(),
-    search_space = ps(
-      nnet.size  = p_int(lower = 2, upper = 15),
-      nnet.decay = p_dbl(lower = 0.0001, upper = 0.1),
-      nnet.maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
-    ),
-    include_jumps = FALSE
-  )
-}
+at_nnet_adj = create_autotuner(
+  learner      = lrn("regr.nnet", id = "nnet_jump", MaxNWts = 50000),
+  search_space = ps(
+    nnet_jump.size  = p_int(lower = 2, upper = 15),
+    nnet_jump.decay = p_dbl(lower = 0.0001, upper = 0.1),
+    nnet_jump.maxit = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
+  ),
+  filter_jumps = TRUE
+)
 
 # BART
 at_bart = create_autotuner(
@@ -291,19 +278,15 @@ at_bart = create_autotuner(
     bart.ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
   )
 )
-if (isTRUE(JUMP)) {
-  at_bart_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.bart", id = "bart", sigest = 1)) |>
-        as_learner(),
-    search_space = ps(
-      bart.k      = p_dbl(lower = 1, upper = 8),
-      bart.numcut = p_int(lower = 30, upper = 200),
-      bart.ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
-    ),
-    include_jumps = FALSE
-  )
-}
+at_bart_adj = create_autotuner(
+  learner      = lrn("regr.bart", id = "bart_jump", sigest = 1),
+  search_space = ps(
+    bart_jump.k      = p_dbl(lower = 1, upper = 8),
+    bart_jump.numcut = p_int(lower = 30, upper = 200),
+    bart_jump.ntree  = p_int(lower = 50, upper = 500, tags = "budget")  # Budget parameter
+  ),
+  filter_jumps = TRUE
+)
 
 # NN
 mlp_graph = po("torch_ingress_num") %>>%
@@ -322,18 +305,15 @@ at_nn = create_autotuner(
     torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
   )
 )
-if (isTRUE(JUMP)) {
-  at_nn_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", mlp_graph, id = "torch") |>
-        as_learner(),
-    search_space = ps(
-      torch.torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
-      torch.torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
-      torch.torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
-    )
-  )
-}
+at_nn_adj = create_autotuner(
+  learner      = mlp_graph,
+  search_space = ps(
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_model_regr.batch_size = p_int(lower = 16, upper = 256, tags = "tune"), # Batch size
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_optimizer.lr = p_dbl(lower = 1e-5, upper = 1e-1, logscale = TRUE, tags = "tune"), # Learning rate
+    torch_ingress_num.nn_linear.nn_relu.nn_head.torch_loss.torch_optimizer.torch_callbacks.torch_model_regr.torch_model_regr.epochs = p_int(lower = 50, upper = 500, tags = "budget")   # BUDGET: training epochs
+  ),
+  filter_jumps = TRUE
+)
 
 # earth
 at_earth = create_autotuner(
@@ -346,21 +326,17 @@ at_earth = create_autotuner(
     earth.nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
   ),
  )
-if (isTRUE(JUMP)) {
-  at_earth_adj = create_autotuner(
-    learner      =  PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.earth", id = "earth")) |>
-        as_learner(),
-    search_space = ps(
-      earth.degree  = p_int(lower = 1, upper = 3),                      # Max interaction degree
-      earth.penalty = p_dbl(lower = 1, upper = 5),                      # GCV penalty per knot
-      earth.nprune  = p_int(lower = 10, upper = 100),                   # Max terms after pruning
-      earth.pmethod = p_fct(levels = c("backward", "none", "exhaustive", "forward")), # Pruning method
-      earth.nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
-    ),
-    include_jumps = FALSE
-  )
-}
+at_earth_adj = create_autotuner(
+  learner      = lrn("regr.earth", id = "earth_jump"),
+  search_space = ps(
+    earth_jump.degree  = p_int(lower = 1, upper = 3),                      # Max interaction degree
+    earth_jump.penalty = p_dbl(lower = 1, upper = 5),                      # GCV penalty per knot
+    earth_jump.nprune  = p_int(lower = 10, upper = 100),                   # Max terms after pruning
+    earth_jump.pmethod = p_fct(levels = c("backward", "none", "exhaustive", "forward")), # Pruning method
+    earth_jump.nk      = p_int(lower = 50, upper = 300, tags = "budget")   # BUDGET: max terms before pruning
+  ),
+  filter_jumps = FALSE
+)
 
 # GBM (Gradient Boosting Machine)
 at_gbm = create_autotuner(
@@ -373,21 +349,17 @@ at_gbm = create_autotuner(
     gbm.n.trees           = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET: number of trees
   )
 )
-if (isTRUE(JUMP)) {
-  at_gbm_adj = create_autotuner(
-    learner      =  PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.gbm", id = "gbm")) |>
-        as_learner(),
-    search_space = ps(
-      gbm.interaction.depth = p_int(lower = 1, upper = 10),        # Tree depth
-      gbm.shrinkage         = p_dbl(lower = 0.001, upper = 0.1, logscale = TRUE), # Learning rate
-      gbm.bag.fraction      = p_dbl(lower = 0.5, upper = 1),       # Subsampling fraction
-      gbm.n.minobsinnode    = p_int(lower = 5, upper = 30),        # Min observations in terminal nodes
-      gbm.n.trees           = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET: number of trees
-    ),
-    include_jumps = FALSE
-  )
-}
+at_gbm_adj = create_autotuner(
+  learner      = lrn("regr.gbm", id = "gbm_jumo"),
+  search_space = ps(
+    gbm_jumo.interaction.depth = p_int(lower = 1, upper = 10),        # Tree depth
+    gbm_jumo.shrinkage         = p_dbl(lower = 0.001, upper = 0.1, logscale = TRUE), # Learning rate
+    gbm_jumo.bag.fraction      = p_dbl(lower = 0.5, upper = 1),       # Subsampling fraction
+    gbm_jumo.n.minobsinnode    = p_int(lower = 5, upper = 30),        # Min observations in terminal nodes
+    gbm_jumo.n.trees           = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET: number of trees
+  ),
+  filter_jumps = TRUE
+)
 
 # LightGBM - Fast, efficient gradient boosting
 at_lightgbm = create_autotuner(
@@ -401,22 +373,18 @@ at_lightgbm = create_autotuner(
     lightgbm.num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
   )
 )
-if (isTRUE(JUMP)) {
-  at_lightgbm_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.lightgbm", id = "lightgbm")) |>
-        as_learner(),
-    search_space = ps(
-      lightgbm.num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
-      lightgbm.learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
-      lightgbm.feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
-      lightgbm.bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
-      lightgbm.min_data_in_leaf   = p_int(lower = 5, upper = 50),
-      lightgbm.num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
-    ),
-    include_jumps = FALSE
-  )
-}
+at_lightgbm_adj = create_autotuner(
+  learner      = lrn("regr.lightgbm", id = "lightgbm_jump"),
+  search_space = ps(
+    lightgbm_jump.num_leaves         = p_int(lower = 7, upper = 127),           # Tree complexity
+    lightgbm_jump.learning_rate      = p_dbl(lower = 0.001, upper = 0.3, logscale = TRUE),
+    lightgbm_jump.feature_fraction   = p_dbl(lower = 0.5, upper = 1),           # Column sampling
+    lightgbm_jump.bagging_fraction   = p_dbl(lower = 0.5, upper = 1),           # Row sampling
+    lightgbm_jump.min_data_in_leaf   = p_int(lower = 5, upper = 50),
+    lightgbm_jump.num_iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+  ),
+  filter_jumps = FALSE
+)
 
 # Cubist - Rule-based model with linear models
 at_cubist = create_autotuner(
@@ -429,21 +397,17 @@ at_cubist = create_autotuner(
     cubist.extrapolation = p_dbl(lower = 0, upper = 70)                 # Extrapolation percentage
   )
 )
-if (isTRUE(JUMP)) {
-  at_cubist_adj = create_autotuner(
-    learner      = PipeOpFilterJumps$new() %>>%
-        po("learner", lrn("regr.cubist", id = "cubist")) |>
-        as_learner(),
-    search_space = ps(
-      cubist.committees = p_int(lower = 1, upper = 50, tags = "budget"),  # BUDGET: number of models (ensemble)
-      cubist.neighbors  = p_int(lower = 0, upper = 7),                     # Instance-based correction (0 = off)
-      cubist.unbiased   = p_lgl(),                                         # Use unbiased rules
-      cubist.rules      = p_int(lower = 10, upper = 70),                  # Max number of rules
-      cubist.extrapolation = p_dbl(lower = 0, upper = 70)                 # Extrapolation percentage
-    ),
-    include_jumps = FALSE
-  )
-}
+at_cubist_adj = create_autotuner(
+  learner      = lrn("regr.cubist", id = "cubist_jump"),
+  search_space = ps(
+    cubist_jump.committees = p_int(lower = 1, upper = 50, tags = "budget"),  # BUDGET: number of models (ensemble)
+    cubist_jump.neighbors  = p_int(lower = 0, upper = 7),                     # Instance-based correction (0 = off)
+    cubist_jump.unbiased   = p_lgl(),                                         # Use unbiased rules
+    cubist_jump.rules      = p_int(lower = 10, upper = 70),                  # Max number of rules
+    cubist_jump.extrapolation = p_dbl(lower = 0, upper = 70)                 # Extrapolation percentage
+  ),
+  filter_jumps = FALSE
+)
 
 # CatBoost - handles factors natively!
 at_catboost = create_autotuner(
@@ -455,6 +419,17 @@ at_catboost = create_autotuner(
     catboost.bagging_temperature = p_dbl(lower = 0, upper = 1),          # Bayesian bootstrap
     catboost.iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
   )
+)
+at_catboost_adj = create_autotuner(
+  llearner = lrn("regr.catboost", id = "catboost_jump"),
+  search_space = ps(
+    catboost_jump.depth          = p_int(lower = 4, upper = 10),              # Tree depth
+    catboost_jump.learning_rate  = p_dbl(lower = 0.01, upper = 0.3, logscale = TRUE),
+    catboost_jump.l2_leaf_reg    = p_dbl(lower = 1, upper = 10),              # L2 regularization
+    catboost_jump.bagging_temperature = p_dbl(lower = 0, upper = 1),          # Bayesian bootstrap
+    catboost_jump.iterations     = p_int(lower = 100, upper = 3000, tags = "budget")  # BUDGET
+  ),
+  filter_jumps = FALSE
 )
 
 # Oblique random survival forest
@@ -477,18 +452,20 @@ at_aorsf = create_autotuner(
 #   )
 # )
 
-# Mlr3 design
+# Combine autotuners
 autotuners = list(
   at_rf, at_xgboost, at_nnet, at_bart, at_nn, at_earth, at_gbm, at_lightgbm, at_cubist, 
   at_catboost, at_aorsf
 )
-if (isTRUE(JUMP)) {
-  jump_learners = list(
+autotuners_jump = list(
     at_rf_adj, at_xgboost_adj, at_nnet_adj, at_bart_adj, at_nn_adj, at_earth_adj,
-    at_gbm_adj, at_lightgbm_adj
+    at_gbm_adj, at_lightgbm_adj, at_cubist_adj, at_catboost_adj
   )
-  autotuners = c(autotuners, jump_learners)
+if (isTRUE(JUMP)) {
+  autotuners = c(autotuners, autotuners_jump)
 }
+
+# Mlr3 design
 design = benchmark_grid(
   tasks = task,
   learners = autotuners, 

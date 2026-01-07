@@ -1,26 +1,17 @@
 Bootstrap: docker
-From: r-base:4.5.2
+From: rocker/r-ver:4.4.2
 
 %post
 
-  # Fix package conflicts - upgrade all packages first
+  # Update and install system dependencies
   apt-get update -qq
-  apt-get upgrade -y
-  
-  # Install system dependencies in smaller groups to avoid conflicts
-  # Core build tools first
   apt-get install -y --no-install-recommends \
     curl \
     wget \
-    ca-certificates \
+    git \
     build-essential \
-    g++ \
     gfortran \
     cmake \
-    git
-
-  # Development libraries
-  apt-get install -y --no-install-recommends \
     pkg-config \
     libcurl4-openssl-dev \
     libssl-dev \
@@ -31,11 +22,8 @@ From: r-base:4.5.2
     libharfbuzz-dev \
     libpng-dev \
     libjpeg-dev \
-    libtiff-dev
-
-  # Math and GIS libraries
-  apt-get install -y --no-install-recommends \
-    libgmp3-dev \
+    libtiff-dev \
+    libgmp-dev \
     libmpfr-dev \
     libgsl-dev \
     libopenblas-dev \
@@ -43,10 +31,7 @@ From: r-base:4.5.2
     libudunits2-dev \
     libgdal-dev \
     libproj-dev \
-    libgeos-dev
-
-  # Additional tools (skip Java and pandoc - not critical for mlr3)
-  apt-get install -y --no-install-recommends \
+    libgeos-dev \
     libglpk-dev \
     libglu1-mesa-dev \
     libgl1-mesa-dev \
@@ -64,7 +49,7 @@ From: r-base:4.5.2
   # Install pak
   R --slave -e 'install.packages("pak", repos = "https://cloud.r-project.org/")'
 
-  # Install R packages - disable system requirements since we installed manually
+  # Install R packages
   R --slave -e "Sys.setenv(NOT_CRAN = 'true', PKG_SYSREQS = 'false'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
 
   # Install torch

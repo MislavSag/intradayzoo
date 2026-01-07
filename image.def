@@ -13,35 +13,38 @@ From: r-base:4.5.2
     openjdk-17-jdk-headless ca-certificates-java \
     && rm -rf /var/lib/apt/lists/*
 
-  # ---- Java must be configured at BUILD time for rJava ----
+  # Java available DURING BUILD (needed for rJava)
   export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
   export PATH="${JAVA_HOME}/bin:${PATH}"
   R CMD javareconf
 
-  # ---- Rust (optional but safe) ----
+  # Rust (optional)
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   . /root/.cargo/env
 
-  # ---- pak + repos ----
+  # pak + repos
   R --slave -e "install.packages('pak', repos='https://cloud.r-project.org')"
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', \
                               multiverse='https://community.r-multiverse.org')"
 
-  # pak: do NOT try to apt-get sysreqs (HPC-friendly, avoids your apt conflicts)
+  # pak settings for HPC stability:
+  # - do not attempt apt-get sysreq installs
+  # - use one worker
   export PKG_SYSREQS=false
+  export PAK_NUM_WORKERS=1
 
-  # ---- (2) FIRST: install mlr3filters + mlr3extralearners with ALL deps (incl Suggests) ----
+  # 1) FIRST: full deps (incl Suggests) for these two
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 Sys.setenv(PKG_SYSREQS='false'); \
-                pak::pak(c( \
-                  'mlr3filters', \
-                  'mlr-org/mlr3extralearners' \
-                ), dependencies=TRUE, ask=FALSE, num_workers=1)"
+                Sys.setenv(PAK_NUM_WORKERS='1'); \
+                pak::pak(c('mlr3filters','mlr-org/mlr3extralearners'), \
+                         dependencies=TRUE, ask=FALSE)"
 
-  # ---- (1) SECOND: install the rest with HARD deps only ----
+  # 2) SECOND: hard deps for the rest
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 Sys.setenv(PKG_SYSREQS='false'); \
+                Sys.setenv(PAK_NUM_WORKERS='1'); \
                 pak::pak(c( \
                   'mlr3verse', \
                   'bbotk', \
@@ -54,7 +57,7 @@ From: r-base:4.5.2
                   'PlantedML/randomPlantedForest', \
                   'mlr-org/mlr3torch', \
                   'MislavSag/mlr3finance' \
-                ), dependencies='hard', ask=FALSE, num_workers=1)"
+                ), dependencies='hard', ask=FALSE)"
 
   # torch runtime
   R --slave -e "torch::install_torch()"
@@ -63,6 +66,7 @@ From: r-base:4.5.2
   export PATH="/root/.cargo/bin:${PATH}"
   export NOT_CRAN="true"
   export PKG_SYSREQS="false"
+  export PAK_NUM_WORKERS="1"
   export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
   export PATH="${JAVA_HOME}/bin:${PATH}"
 

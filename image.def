@@ -1,51 +1,57 @@
-FROM r-base:4.5.2
+Bootstrap: docker
+From: r-base:4.5.2
 
-LABEL org.opencontainers.image.licenses="GPL-3.0-or-later"
+%post
+  set -e
 
-ARG NCPUS=-1
-
-# System deps (pak + compilation + git; curl also used for rust/torch downloads)
-RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+  # System deps
+  apt-get update -qq
+  apt-get install -y --no-install-recommends \
     curl ca-certificates git \
     libcurl4-openssl-dev \
     libssl-dev libxml2-dev \
-    build-essential g++ cmake \
-  && rm -rf /var/lib/apt/lists/*
+    build-essential g++ cmake
+  rm -rf /var/lib/apt/lists/*
 
-# Rust (safe to include; helps if any dependency needs it)
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+  # Rust (optional but safe)
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  . /root/.cargo/env
 
-# Install pak + add mlr3 repos
-RUN Rscript -e "install.packages('pak', repos='https://cloud.r-project.org'); \
-  Sys.setenv(NOT_CRAN='true'); \
-  pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', multiverse='https://community.r-multiverse.org')"
+  # pak + repos
+  R --slave -e "install.packages('pak', repos='https://cloud.r-project.org')"
+  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', \
+                              multiverse='https://community.r-multiverse.org')"
 
-# 1) Install HARD deps for most packages (stable on HPC)
-RUN Rscript -e "Sys.setenv(NOT_CRAN='true'); \
-  pak::pak(c( \
-    'mlr3verse', \
-    'bbotk', \
-    'mlr-org/mlr3learners', \
-    'mlr3hyperband', \
-    'mlr3batchmark', 'batchtools', \
-    'torch', \
-    'BART', \
-    'gausscov', \
-    'PlantedML/randomPlantedForest', \
-    'mlr-org/mlr3torch', \
-    'MislavSag/mlr3finance' \
-  ), dependencies='hard', ask=FALSE)"
+  # 1) HARD deps for most packages (stable)
+  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                pak::pak(c( \
+                  'mlr3verse', \
+                  'bbotk', \
+                  'mlr-org/mlr3learners', \
+                  'mlr3hyperband', \
+                  'mlr3batchmark', 'batchtools', \
+                  'torch', \
+                  'BART', \
+                  'gausscov', \
+                  'PlantedML/randomPlantedForest', \
+                  'mlr-org/mlr3torch', \
+                  'MislavSag/mlr3finance' \
+                ), dependencies='hard', ask=FALSE)"
 
-# 2) Install ALL deps (incl Suggests) ONLY for these two packages
-RUN Rscript -e "Sys.setenv(NOT_CRAN='true'); \
-  pak::pak(c( \
-    'mlr-org/mlr3extralearners', \
-    'mlr3filters' \
-  ), dependencies=TRUE, ask=FALSE)"
+  # 2) ALL deps (incl Suggests) ONLY for these
+  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                pak::pak(c( \
+                  'mlr3filters', \
+                  'mlr-org/mlr3extralearners' \
+                ), dependencies=TRUE, ask=FALSE)"
 
-# Torch runtime (downloads libtorch into the image)
-RUN Rscript -e "torch::install_torch()"
+  # torch runtime
+  R --slave -e "torch::install_torch()"
 
-# Optional but convenient
-ENV NOT_CRAN=true
+%environment
+  export PATH="/root/.cargo/bin:${PATH}"
+  export NOT_CRAN="true"
+
+%runscript
+  exec Rscript "$@"

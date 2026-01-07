@@ -4,13 +4,14 @@ From: r-base:4.5.2
 %post
   set -e
 
-  # System deps
   apt-get update -qq
   apt-get install -y --no-install-recommends \
     curl ca-certificates git \
     libcurl4-openssl-dev \
     libssl-dev libxml2-dev \
-    build-essential g++ cmake
+    build-essential g++ cmake \
+    # --- Java (headless to avoid pulling GUI deps) ---
+    openjdk-17-jdk-headless ca-certificates-java
   rm -rf /var/lib/apt/lists/*
 
   # Rust (optional but safe)
@@ -23,7 +24,7 @@ From: r-base:4.5.2
                 pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', \
                               multiverse='https://community.r-multiverse.org')"
 
-  # 1) HARD deps for most packages (stable)
+  # 1) Core stack (hard deps only)
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::pak(c( \
                   'mlr3verse', \
@@ -39,8 +40,10 @@ From: r-base:4.5.2
                   'MislavSag/mlr3finance' \
                 ), dependencies='hard', ask=FALSE)"
 
-  # 2) ALL deps (incl Suggests) ONLY for these
+  # 2) ALL deps (incl Suggests) ONLY for extralearners + filters,
+  # but DO NOT let pak run apt-get for sysreqs (avoids default-jdk/texlive/pandoc/mesa conflicts)
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                Sys.setenv(PKG_SYSREQS='false'); \
                 pak::pak(c( \
                   'mlr3filters', \
                   'mlr-org/mlr3extralearners' \
@@ -52,6 +55,9 @@ From: r-base:4.5.2
 %environment
   export PATH="/root/.cargo/bin:${PATH}"
   export NOT_CRAN="true"
+  export PKG_SYSREQS="false"
+  export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+  export PATH="${JAVA_HOME}/bin:${PATH}"
 
 %runscript
   exec Rscript "$@"

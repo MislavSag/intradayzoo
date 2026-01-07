@@ -16,7 +16,7 @@ From: r-base:4.5.2
     cmake \
     libgmp3-dev \
     libgsl-dev \
-    libatlas-base-dev \
+    libopenblas-dev \
     liblapack-dev \
     libudunits2-dev \
     libgdal-dev \
@@ -31,7 +31,6 @@ From: r-base:4.5.2
 
   # NOT_CRAN speeds up polars installation
   # Add mlr3universe and multiverse repos, then install everything
-  # Use single line to avoid shell escaping issues
   R --slave -e "Sys.setenv(NOT_CRAN = 'true'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
 
   # Install torch separately (requires special handling)

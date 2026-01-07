@@ -135,24 +135,19 @@ create_autotuner = function(
   n_evals = 3, 
   filter_frac = 0.01,
   hyper = TRUE, 
-  include_jumps = TRUE) {
-  
-  # debug
-  # learner = lrn("regr.ranger", id = "ranger")
-  # n_features = 10
+  filter_jumps = JUMP) {  # Add parameter to reference global JUMP
   
   # Choose filter method
   filter_graph = po("filter", filter = flt("jmim"), filter.frac = filter_frac)
-  # if ("importance" %in% learner$properties) {
-  #   filter_obj = flt("importance", learner = learner$clone(), filter.frac = filter_frac)
-  # } else {
-  #   filter_graph = po("filter", filter = flt("jmim"), filter.frac = filter_frac)
-  #   # filter_graph = flt("importance", learner = lrn("regr.ranger")) # Alternative
-  # }
+  
+  # Apply jump filter if needed (before feature selection)
+  if (!isTRUE(filter_jumps)) {
+    filter_graph = po("filter_jumps") %>>% filter_graph
+  }
 
-  # Check factors
+  # Check factors and build pipeline
   if (!("factor" %in% learner$feature_types) & "factor" %in% unique(task$feature_types$type)) {
-    cat("Factor encoding for learner", learner$id)
+    cat("Factor encoding for learner", learner$id, "\n")
     learner = filter_graph %>>%
       po("removeconstants") %>>%
       po("collapsefactors", no_collapse_above_prevalence = 0.01) %>>%
@@ -173,7 +168,6 @@ create_autotuner = function(
   }
 
   # Use inner resampling for validation (80/20 split)
-  # This is the validation set mentioned in the paper
   inner_rsmp = rsmp("holdout", ratio = 0.8)
 
   # Create autotuner
@@ -217,6 +211,7 @@ at_rf = create_autotuner(
     ranger.num.trees  = p_int(10, 2000, tags = "budget")  # Budget parameter
   )
 )
+
 if (isTRUE(JUMP)) {
   at_rf_adj = create_autotuner(
     learner      = PipeOpFilterJumps$new() %>>%

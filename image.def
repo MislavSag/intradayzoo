@@ -3,24 +3,46 @@ From: r-base:4.5.2
 
 %post
 
-  # System dependencies
-  # pkg-config is needed to find libcurl
+  # System dependencies - install EVERYTHING up front
   apt-get update -qq && apt-get install -y --no-install-recommends \
     curl \
     pkg-config \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
+    libfontconfig1-dev \
+    libfreetype6-dev \
+    libfribidi-dev \
+    libharfbuzz-dev \
+    libtiff-dev \
+    libjpeg-dev \
+    libpng-dev \
     build-essential \
     g++ \
     cmake \
+    gfortran \
     libgmp3-dev \
+    libmpfr-dev \
     libgsl-dev \
     libopenblas-dev \
     liblapack-dev \
     libudunits2-dev \
     libgdal-dev \
-    libproj-dev
+    libproj-dev \
+    libgeos-dev \
+    libglpk-dev \
+    libglu1-mesa-dev \
+    libgl1-mesa-dev \
+    libx11-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libprotoc-dev \
+    libhiredis-dev \
+    libgit2-dev \
+    git \
+    python3 \
+    default-jdk \
+    pandoc
 
   # Install rust for polars
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -29,9 +51,10 @@ From: r-base:4.5.2
   # Install pak first
   R --slave -e 'install.packages("pak", repos = "https://cloud.r-project.org/")'
 
+  # Install R packages with system requirements DISABLED
   # NOT_CRAN speeds up polars installation
-  # Add mlr3universe and multiverse repos, then install everything
-  R --slave -e "Sys.setenv(NOT_CRAN = 'true'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
+  # PKG_SYSREQS=false prevents pak from trying to install system deps (already done above)
+  R --slave -e "Sys.setenv(NOT_CRAN = 'true', PKG_SYSREQS = 'false'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
 
   # Install torch separately (requires special handling)
   R --slave -e "pak::pak('torch'); torch::install_torch()"

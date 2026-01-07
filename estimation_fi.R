@@ -133,7 +133,7 @@ create_autotuner = function(
   tuner = tnr("hyperband", eta = 6),
   search_space = NULL, 
   n_evals = 3, 
-  filter_frac = 0.01,
+  filter_frac = 0.02,
   hyper = TRUE, 
   filter_jumps = JUMP) {  # Add parameter to reference global JUMP
   

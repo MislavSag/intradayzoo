@@ -15,11 +15,7 @@ From: mlrorg/mlr3-full:latest
   # Install ONLY the requested packages, with HARD dependencies only (no Suggests)
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::pak(c( \
-                  'mlr3batchmark', \
-                  'batchtools', \
-                  'torch', \
                   'gausscov', \
-                  'mlr-org/mlr3torch', \
                   'MislavSag/mlr3finance' \
                 ), dependencies='hard', ask=FALSE)"
 

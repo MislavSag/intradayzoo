@@ -421,7 +421,7 @@ at_catboost = create_autotuner(
   )
 )
 at_catboost_adj = create_autotuner(
-  llearner = lrn("regr.catboost", id = "catboost_jump"),
+  learner = lrn("regr.catboost", id = "catboost_jump"),
   search_space = ps(
     catboost_jump.depth          = p_int(lower = 4, upper = 10),              # Tree depth
     catboost_jump.learning_rate  = p_dbl(lower = 0.01, upper = 0.3, logscale = TRUE),
@@ -544,7 +544,7 @@ sh_file = sprintf("
 
 #PBS -N HFFZFI
 #PBS -l ncpus=4
-#PBS -l mem=52GB
+#PBS -l mem=46GB
 #PBS -l walltime=90:00:00
 #PBS -J 1-%d
 #PBS -o experiments_fi/logs

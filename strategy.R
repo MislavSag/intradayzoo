@@ -9,7 +9,7 @@ library(AzureStor)
 
 
 # Import registry
-reg = loadRegistry("./experiments", "./experiments", writeable = TRUE)
+reg = loadRegistry("./experiments_fi", "./experiments_fi", writeable = TRUE)
 getStatus(reg = reg)
 job_table = getJobTable(reg = reg)
 job_table = unwrap(job_table)
@@ -95,6 +95,7 @@ for (i in seq_len(nrow(bmr_with_preds))) {
 predictions_dt = rbindlist(predictions_list)
 
 # Merge predictions_dt and spy
+predictions_dt[, unique(learner_id)]
 attr(spy$datetime, "tz")
 attr(predictions_dt$datetime, "tz")
 back = spy[, .(datetime, target)][predictions_dt, on = "datetime"]
@@ -102,6 +103,7 @@ back = na.omit(back)
 back[, jump := 0]
 back[grepl("jump", learner_id), jump := 1]
 back[, learner_id := gsub("filter_jumps\\.", "", learner_id)]
+back[, learner_id := gsub("jmim\\.", "", learner_id)]
 back[, learner_id := gsub("\\..*", "", learner_id)]
 back[jump == 1, learner_id := paste0(learner_id, "_jump")]
 back[, jump := NULL]
@@ -154,6 +156,7 @@ back[, .(
 ), by = learner_id]
 
 # Predicttions to wide format
+back[, .N, by = learner_id]
 models_to_keep = back[, .N > 100000, by = learner_id][V1 == TRUE, learner_id]
 port_mkt  = back[, .(datetime, ret_truth, ret_target, ret_target_net, learner_id)] |>
   dcast(datetime ~ learner_id, value.var = "ret_truth") |>
@@ -188,7 +191,6 @@ cbind(x[, 1], x[, 2] - y[, 2])[order(value)]
 charts.PerformanceSummary(port_mkt)
 charts.PerformanceSummary(port_spy)
 charts.PerformanceSummary(port_spy_net)  # Net of actual costs
-charts.PerformanceSummary(port_spy["2007/2008"])
 
 # Compare to QC
 back[, {

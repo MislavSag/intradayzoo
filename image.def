@@ -7,24 +7,26 @@ From: r-base:4.5.2
 %post
   set -e
 
-  # ---- System deps (pak + compilation + git; curl also used for rust/torch downloads) ----
   apt-get update -qq
   apt-get install -y --no-install-recommends \
     curl ca-certificates git \
     libcurl4-openssl-dev \
     libssl-dev libxml2-dev \
-    build-essential g++ cmake
-  rm -rf /var/lib/apt/lists/*
+    build-essential g++ cmake \
+    && rm -rf /var/lib/apt/lists/*
 
-  # ---- Rust (helps if any dependency needs it) ----
+  # Rust (safe to include)
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   . /root/.cargo/env
 
-  # ---- R packages via pak (mlr3-style) ----
+  # pak + repos
   R --slave -e "install.packages('pak', repos='https://cloud.r-project.org')"
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', \
-                              multiverse='https://community.r-multiverse.org'); \
+                              multiverse='https://community.r-multiverse.org')"
+
+  # Install runtime deps only (no Suggests)
+  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::pak(c( \
                   'mlr3verse', \
                   'bbotk', \
@@ -33,19 +35,16 @@ From: r-base:4.5.2
                   'mlr3hyperband', \
                   'mlr3batchmark', 'batchtools', \
                   'torch', \
-                  'remotes', \
                   'BART', \
                   'gausscov', \
                   'PlantedML/randomPlantedForest', \
                   'mlr-org/mlr3torch', \
                   'MislavSag/mlr3finance' \
-                ), dependencies=TRUE, ask=FALSE)"
+                ), dependencies=c('Depends','Imports','LinkingTo'), ask=FALSE)"
 
-  # ---- Torch runtime (downloads libtorch into the image) ----
   R --slave -e "torch::install_torch()"
 
 %environment
-  # make Rust available at runtime too
   export PATH="/root/.cargo/bin:${PATH}"
   export NOT_CRAN="true"
 

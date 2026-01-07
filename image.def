@@ -4,10 +4,10 @@ From: r-base:4.5.2
 %post
 
   # System dependencies
-  # curl needed for rustup (polars)
-  # libcurl4-openssl-dev needed for pak
+  # pkg-config is needed to find libcurl
   apt-get update -qq && apt-get install -y --no-install-recommends \
     curl \
+    pkg-config \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
@@ -20,8 +20,7 @@ From: r-base:4.5.2
     liblapack-dev \
     libudunits2-dev \
     libgdal-dev \
-    libproj-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libproj-dev
 
   # Install rust for polars
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -32,15 +31,17 @@ From: r-base:4.5.2
 
   # NOT_CRAN speeds up polars installation
   # Add mlr3universe and multiverse repos, then install everything
-  R --slave -e 'Sys.setenv(NOT_CRAN = "true"); \
-                pak::repo_add(mlr3universe = "https://mlr-org.r-universe.dev", multiverse = "https://community.r-multiverse.org"); \
-                pak::pak(c("mlr3verse", "bbotk", "mlr3db", "mlr3fairness", "mlr3hyperband", "mlr3oml", "mlr3learners", "mlr3extralearners", "mlr3torch", "mlr3filters", "mlr3fselect", "mlr3batchmark", "MislavSag/mlr3finance", "remotes", "BART", "PlantedML/randomPlantedForest", "praznik", "FSelectorRcpp", "care"), dependencies = TRUE, ask = FALSE);'
+  # Use single line to avoid shell escaping issues
+  R --slave -e "Sys.setenv(NOT_CRAN = 'true'); pak::repo_add(mlr3universe = 'https://mlr-org.r-universe.dev', multiverse = 'https://community.r-multiverse.org'); pak::pak(c('mlr3verse', 'bbotk', 'mlr3db', 'mlr3fairness', 'mlr3hyperband', 'mlr3oml', 'mlr3learners', 'mlr3extralearners', 'mlr3torch', 'mlr3filters', 'mlr3fselect', 'mlr3batchmark', 'MislavSag/mlr3finance', 'remotes', 'BART', 'PlantedML/randomPlantedForest', 'praznik', 'FSelectorRcpp', 'care'), dependencies = TRUE, ask = FALSE)"
 
   # Install torch separately (requires special handling)
-  R --slave -e 'pak::pak("torch"); torch::install_torch()'
+  R --slave -e "pak::pak('torch'); torch::install_torch()"
 
   # Install CatBoost from binary (faster than compilation)
-  R --slave -e 'remotes::install_url("https://github.com/catboost/catboost/releases/download/v1.2.7/catboost-R-linux-x86_64-1.2.7.tgz", INSTALL_opts = c("--no-multiarch", "--no-test-load"))'
+  R --slave -e "remotes::install_url('https://github.com/catboost/catboost/releases/download/v1.2.7/catboost-R-linux-x86_64-1.2.7.tgz', INSTALL_opts = c('--no-multiarch', '--no-test-load'))"
+
+  # Clean up apt cache after all installs complete
+  rm -rf /var/lib/apt/lists/*
 
 %runscript
   Rscript $@

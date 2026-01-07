@@ -502,7 +502,7 @@ if (interactive()) {
 }
 
 # populate registry with problems and algorithms to form the jobs
-batchmark(design, reg = reg, store_models = FALSE)
+batchmark(design, reg = reg, store_models = TRUE)
 
 # save registry
 saveRegistry(reg = reg)

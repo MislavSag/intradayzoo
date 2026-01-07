@@ -13,18 +13,35 @@ From: r-base:4.5.2
     openjdk-17-jdk-headless ca-certificates-java \
     && rm -rf /var/lib/apt/lists/*
 
-  # Rust (optional but safe)
+  # ---- Java must be configured at BUILD time for rJava ----
+  export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+  export PATH="${JAVA_HOME}/bin:${PATH}"
+  R CMD javareconf
+
+  # ---- Rust (optional but safe) ----
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   . /root/.cargo/env
 
-  # pak + repos
+  # ---- pak + repos ----
   R --slave -e "install.packages('pak', repos='https://cloud.r-project.org')"
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
                 pak::repo_add(mlr3universe='https://mlr-org.r-universe.dev', \
                               multiverse='https://community.r-multiverse.org')"
 
-  # 1) Core stack (hard deps only)
+  # pak: do NOT try to apt-get sysreqs (HPC-friendly, avoids your apt conflicts)
+  export PKG_SYSREQS=false
+
+  # ---- (2) FIRST: install mlr3filters + mlr3extralearners with ALL deps (incl Suggests) ----
   R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                Sys.setenv(PKG_SYSREQS='false'); \
+                pak::pak(c( \
+                  'mlr3filters', \
+                  'mlr-org/mlr3extralearners' \
+                ), dependencies=TRUE, ask=FALSE, num_workers=1)"
+
+  # ---- (1) SECOND: install the rest with HARD deps only ----
+  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
+                Sys.setenv(PKG_SYSREQS='false'); \
                 pak::pak(c( \
                   'mlr3verse', \
                   'bbotk', \
@@ -37,15 +54,7 @@ From: r-base:4.5.2
                   'PlantedML/randomPlantedForest', \
                   'mlr-org/mlr3torch', \
                   'MislavSag/mlr3finance' \
-                ), dependencies='hard', ask=FALSE)"
-
-  # 2) ALL deps (incl Suggests) only for these, but don't let pak apt-get sysreqs
-  R --slave -e "Sys.setenv(NOT_CRAN='true'); \
-                Sys.setenv(PKG_SYSREQS='false'); \
-                pak::pak(c( \
-                  'mlr3filters', \
-                  'mlr-org/mlr3extralearners' \
-                ), dependencies=TRUE, ask=FALSE)"
+                ), dependencies='hard', ask=FALSE, num_workers=1)"
 
   # torch runtime
   R --slave -e "torch::install_torch()"

@@ -145,7 +145,7 @@ create_autotuner = function(
       mrmr = po("filter", id = "filter_mrmr", filter = flt("mrmr"), filter.frac = 0.02),
       cmim = po("filter", id = "filter_cmim", filter = flt("cmim"), filter.frac = 0.02),
       importance = po("filter", id = "filter_importance",
-                      filter = flt("importance", learner = lrn("regr.ranger", num.trees = 100)),
+                      filter = flt("importance", learner = lrn("regr.ranger", num.trees = 100, importance = "impurity")),
                       filter.frac = 0.02)
     )) %>>%
     po("unbranch", id = "filter_unbranch")

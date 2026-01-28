@@ -139,14 +139,15 @@ create_autotuner = function(
 # Create branching filter graph - tuner chooses best filter method
   # Fixed filter.frac = 0.02 (2% of features) to compare methods fairly
   filter_graph = po("branch", id = "filter_branch",
-                    options = c("jmim", "mrmr", "cmim", "importance")) %>>%
+                    options = c("jmim", "mrmr", "cmim", "importance", "carscore")) %>>%
     gunion(list(
       jmim = po("filter", id = "filter_jmim", filter = flt("jmim"), filter.frac = 0.02),
       mrmr = po("filter", id = "filter_mrmr", filter = flt("mrmr"), filter.frac = 0.02),
       cmim = po("filter", id = "filter_cmim", filter = flt("cmim"), filter.frac = 0.02),
       importance = po("filter", id = "filter_importance",
                       filter = flt("importance", learner = lrn("regr.ranger", num.trees = 100, importance = "impurity")),
-                      filter.frac = 0.02)
+                      filter.frac = 0.02),
+      carscore = po("filter", id = "filter_carscore", filter = flt("carscore"), filter.frac = 0.02)
     )) %>>%
     po("unbranch", id = "filter_unbranch")
 
@@ -213,7 +214,7 @@ threads = 4
 # Filter search space (reused across models)
 # Only tune filter selection, keep filter.frac fixed to compare methods fairly
 filter_ps = ps(
-  filter_branch.selection = p_fct(levels = c("jmim", "mrmr", "cmim", "importance"))
+  filter_branch.selection = p_fct(levels = c("jmim", "mrmr", "cmim", "importance", "carscore"))
 )
 
 # Random forest
@@ -445,11 +446,12 @@ at_catboost_adj = create_autotuner(
 )
 
 # Oblique random survival forest
+# Note: mtry upper bound must be <= number of features after filtering (2% of ~800 = ~16)
 at_aorsf = create_autotuner(
   learner = lrn("regr.aorsf", id = "aorsf"),
   search_space = c(ps(
     aorsf.n_tree = p_int(lower = 100, upper = 2000, tags = "budget"),
-    aorsf.mtry = p_int(lower = 1, upper = 20),
+    # aorsf.mtry = p_int(lower = 1, upper = 15),
     aorsf.leaf_min_obs = p_int(lower = 5, upper = 50),
     aorsf.split_min_obs = p_int(lower = 10, upper = 100)
   ), filter_ps)

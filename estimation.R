@@ -63,7 +63,7 @@ PipeOpFilterJumps = R6::R6Class(
 mlr_pipeops$add("filter_jumps", PipeOpFilterJumps)
 
 # Import data
-factors = fread("data/factor_returns.csv")
+factors = fread("data/factor_returns_local.csv")
 
 # Prepare data
 head(colnames(factors)); tail(colnames(factors))
@@ -86,7 +86,7 @@ task$col_roles$feature = setdiff(task$col_roles$feature, id_columns)
 # taskc$col_roles$feature = setdiff(taskc$col_roles$feature, id_columns)
 
 # Cross validation resampling parameters
-FIRST_YEAR = 2004
+FIRST_YEAR = 2006
 train_size_years_init = FIRST_YEAR - factors[, min(year)]
 
 # Test rolling cross validation
